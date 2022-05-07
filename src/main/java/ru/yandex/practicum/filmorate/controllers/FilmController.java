@@ -38,7 +38,7 @@ public class FilmController {
     @PutMapping
     //обновление фильма
     public Film update(@Valid @RequestBody Film film) {
-        if (films.containsKey(film.getId())) {
+        if (film.getId()==0) {
             throw new IllegalArgumentException("If you want to create film use HTTP method POST");
         }
         films.put(film.getId(), film);
