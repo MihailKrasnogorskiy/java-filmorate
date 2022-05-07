@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
@@ -15,31 +14,48 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Validated
+@Slf4j
+
+//REST контроллер
 public class UserController {
-
-    private HashMap<String, User> users = new HashMap<>();
-
-    Logger log = LoggerFactory.getLogger(UserController.class);
+    private long id = 1;
+    private final HashMap<String, User> users = new HashMap<>();
+    private final HashMap<Long, String> emailMaps = new HashMap<>();
 
     @GetMapping
+    //возвращает список всех пользователей
     public List<User> findAll() {
         log.trace("Количестов пользователей: {}", users.entrySet().size());
         return new ArrayList<>(users.values());
     }
 
+    // создание пользователя
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         if (users.containsKey(user.getEmail())) {
             throw new ValidationException("This email is used");
         }
-        log.trace(user.toString());
+        user.setId(generateId());
+        emailMaps.put(user.getId(), user.getEmail());
         users.put(user.getEmail(), user);
+        log.info("Create new user {}", user);
         return user;
     }
 
+    // обновление пользователя
     @PutMapping
     public User update(@Valid @RequestBody User user) {
+        if (emailMaps.containsKey(user.getId()) && !(emailMaps.get(user.getId()).equals(user.getEmail()))) {
+            users.remove(emailMaps.get(user.getId()));
+        }
+        emailMaps.put(user.getId(), user.getEmail());
         users.put(user.getEmail(), user);
+        log.info("Update user {}", user);
         return user;
+    }
+
+    // создание id
+    private long generateId() {
+        return id++;
     }
 }
