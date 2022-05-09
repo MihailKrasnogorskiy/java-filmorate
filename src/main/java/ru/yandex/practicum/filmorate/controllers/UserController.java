@@ -25,7 +25,6 @@ public class UserController {
     @GetMapping
     //возвращает список всех пользователей
     public List<User> findAll() {
-        log.trace("Количестов пользователей: {}", users.entrySet().size());
         return new ArrayList<>(users.values());
     }
 
@@ -57,5 +56,11 @@ public class UserController {
     // создание id
     private long generateId() {
         return id++;
+    }
+
+    public void resetController(){
+        id = 1;
+        users.clear();
+        emailMaps.clear();
     }
 }

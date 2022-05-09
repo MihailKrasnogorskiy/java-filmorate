@@ -19,10 +19,17 @@ public class FilmController {
     private final HashMap<Long, Film> films = new HashMap<>();
     private long id = 1;
 
+    public HashMap<Long, Film> getFilms() {
+        return films;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     @GetMapping
     //возвращение списка фильмов
     public List<Film> findAll() {
-        log.trace("Количестов пользователей: {}", films.entrySet().size());
         return new ArrayList<>(films.values());
     }
 
@@ -38,7 +45,7 @@ public class FilmController {
     @PutMapping
     //обновление фильма
     public Film update(@Valid @RequestBody Film film) {
-        if (film.getId()==0) {
+        if (!films.containsKey(film.getId())) {
             throw new IllegalArgumentException("If you want to create film use HTTP method POST");
         }
         films.put(film.getId(), film);

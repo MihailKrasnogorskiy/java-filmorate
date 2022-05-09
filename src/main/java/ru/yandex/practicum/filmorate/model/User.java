@@ -3,11 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 
-import javax.validation.ValidationException;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
@@ -20,6 +16,7 @@ public class User {
     private String email;
     @NotBlank
     @NotNull
+    @Pattern(regexp = "\\S*$")
     private String login;
     @NotNull
     private String name;
@@ -27,7 +24,6 @@ public class User {
     private LocalDate birthday;
 
     public User(String email, String login, String name, LocalDate birthday) {
-        validation(login);
         this.email = email;
         this.login = login;
         if (name.isBlank()) {
@@ -36,12 +32,5 @@ public class User {
             this.name = name;
         }
         this.birthday = birthday;
-    }
-
-    //валидация логина
-    private void validation(String login) {
-        if (login.contains(" ")) {
-            throw new ValidationException("This login contains space");
-        }
     }
 }
