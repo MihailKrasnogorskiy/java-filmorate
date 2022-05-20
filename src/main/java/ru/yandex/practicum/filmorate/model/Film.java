@@ -8,6 +8,10 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -22,12 +26,18 @@ public class Film {
     private LocalDate releaseDate;
     private Duration duration;
 
+    private Set<Long> likes = new HashSet<>();
+
     public Film(String name, String description, LocalDate releaseDate, Duration duration) {
         validation(releaseDate, duration);
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+    }
+
+    public Set<Long> getLikes() {
+        return likes;
     }
 
     //валидация даты и продолжительности

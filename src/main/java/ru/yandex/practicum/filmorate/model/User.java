@@ -5,6 +5,10 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 //класс пользователя
@@ -23,6 +27,10 @@ public class User {
     @Past
     private LocalDate birthday;
 
+    private Set<Long> friends = new HashSet<>();
+
+    private Set<Long> likedFilms = new HashSet<>();
+
     public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
         this.login = login;
@@ -32,5 +40,13 @@ public class User {
             this.name = name;
         }
         this.birthday = birthday;
+    }
+
+    public Set<Long> getFriends() {
+        return friends;
+    }
+
+    public Set<Long> getLikedFilms() {
+        return likedFilms;
     }
 }

@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storages.film.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -16,28 +18,23 @@ import java.util.List;
 @Slf4j
 //класс REST контроллера
 public class FilmController {
-    private final HashMap<Long, Film> films = new HashMap<>();
-    private long id = 1;
+    private FilmStorage storage;
 
-    public HashMap<Long, Film> getFilms() {
-        return films;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    @Autowired
+    public FilmController(FilmStorage storage) {
+        this.storage = storage;
     }
 
     @GetMapping
     //возвращение списка фильмов
     public List<Film> findAll() {
-        return new ArrayList<>(films.values());
+        return storage.findAllFilms();
     }
 
     @PostMapping
     //создание фильма
     public Film create(@Valid @RequestBody Film film) {
-        film.setId(generateId());
-        films.put(film.getId(), film);
+        storage.createFilm(film);
         log.info("Create new film {}", film);
         return film;
     }
@@ -45,16 +42,8 @@ public class FilmController {
     @PutMapping
     //обновление фильма
     public Film update(@Valid @RequestBody Film film) {
-        if (!films.containsKey(film.getId())) {
-            throw new IllegalArgumentException("If you want to create film use HTTP method POST");
-        }
-        films.put(film.getId(), film);
+        storage.updateFilm(film);
         log.info("Update film {}", film);
         return film;
-    }
-
-    // создание id
-    private long generateId() {
-        return id++;
     }
 }
