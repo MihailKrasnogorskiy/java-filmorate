@@ -7,10 +7,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,19 +19,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class UserControllerTest {
-    private User user = new User(
-            "mail@mail.ru",
-            "TomCycyruz",
-            "Tom",
-            LocalDate.of(1975,06,02));
-    private User validUser = new User(
-            "mail@mail.ru",
-            "TomCycyruz",
-            "Tom",
-            LocalDate.of(1975,06,02));
-    private String body;
     @Autowired
     ObjectMapper mapper;
+    private final User user = new User(
+            "mail@mail.ru",
+            "TomCycyruz",
+            "Tom",
+            LocalDate.of(1975, 06, 02));
+    private final User validUser = new User(
+            "mail@mail.ru",
+            "TomCycyruz",
+            "Tom",
+            LocalDate.of(1975, 06, 02));
+    private String body;
     @Autowired
     private MockMvc mockMvc;
     @Autowired

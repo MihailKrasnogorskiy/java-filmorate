@@ -20,19 +20,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class FilmControllerTest {
-    private Film film = new Film(
+    @Autowired
+    ObjectMapper mapper;
+    private final Film film = new Film(
             "Mission impossible",
             "Film with Tom Cycyruz",
             LocalDate.of(2000, 02, 22),
             Duration.ofMinutes(200));
-    private Film validFilm = new Film(
+    private final Film validFilm = new Film(
             "Mission impossible",
             "Film with Tom Cycyruz",
             LocalDate.of(2000, 02, 22),
             Duration.ofMinutes(200));
     private String body;
-    @Autowired
-    ObjectMapper mapper;
     @Autowired
     private MockMvc mockMvc;
     @Autowired

@@ -1,10 +1,10 @@
-package ru.yandex.practicum.filmorate.storages.user;
+package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.serveses.IDCreator;
-import ru.yandex.practicum.filmorate.storages.user.UserStorage;
+import ru.yandex.practicum.filmorate.servises.IDCreator;
 
 import javax.validation.ValidationException;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 //класс реализация хранилища пользователей
 public class InMemoryUserStorage implements UserStorage {
-    private IDCreator idCreator;
+    private final IDCreator idCreator;
     private final HashMap<String, User> users = new HashMap<>();
     private final HashMap<Long, String> emailMaps = new HashMap<>();
 
@@ -49,6 +49,23 @@ public class InMemoryUserStorage implements UserStorage {
         users.put(user.getEmail(), user);
         log.info("Update user {}", user);
         return user;
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        if (emailMaps.containsKey(id) || id <= 0) {
+            throw new FoundException("User is not registered");
+        }
+        return users.get(emailMaps.get(id));
+    }
+
+    @Override
+    public void deleteUser(String email) {
+        if (users.containsKey(email) || email.equals("")) {
+            throw new FoundException("User is not registered");
+        }
+        emailMaps.remove(users.get(email).getId());
+        users.remove(email);
     }
 
 }

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.serveses;
+package ru.yandex.practicum.filmorate.servises;
 
 import org.springframework.stereotype.Service;
 
