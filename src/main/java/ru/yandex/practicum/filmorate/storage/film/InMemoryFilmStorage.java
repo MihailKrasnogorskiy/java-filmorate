@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.exceptions.IllegalHttpMethodException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.servises.IDCreator;
+import ru.yandex.practicum.filmorate.servises.film.FilmIdCreator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,20 +19,20 @@ import java.util.TreeSet;
 public class InMemoryFilmStorage implements FilmStorage {
     private final HashMap<Long, Film> films = new HashMap<>();
     private final TreeSet<Long> sortedFilms = new TreeSet<>((id1, id2) -> {
-        if (films.get(id1).getLikes().size() == films.get(id2).getLikes().size())
-            return (int) (id1 - id2);
-        return films.get(id1).getLikes().size() - films.get(id2).getLikes().size();
+        if (films.get(id2).getLikes().size() == films.get(id1).getLikes().size())
+            return (int) (id2 - id1);
+        return films.get(id2).getLikes().size() - films.get(id1).getLikes().size();
     });
-    private final IDCreator idCreator;
+    private final FilmIdCreator filmIdCreator;
 
     @Autowired
-    public InMemoryFilmStorage(IDCreator idCreator) {
-        this.idCreator = idCreator;
+    public InMemoryFilmStorage(FilmIdCreator filmIdCreator) {
+        this.filmIdCreator = filmIdCreator;
     }
 
     @Override
     public Film createFilm(Film film) {
-        film.setId(idCreator.generateId());
+        film.setId(filmIdCreator.generateId());
         films.put(film.getId(), film);
         addFilmToSortedFilmSet(film.getId());
         log.info("Create new film {}", film);
@@ -46,6 +46,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
+        if (film.getId() < 0) {
+            throw new FoundException("This film not found");
+        }
         if (!films.containsKey(film.getId())) {
             throw new IllegalHttpMethodException("If you want to create film use HTTP method POST");
         }
@@ -80,5 +83,11 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new FoundException("This film is not found");
         }
         return films.get(id);
+    }
+
+    public void clear() {
+        films.clear();
+        sortedFilms.clear();
+        filmIdCreator.clear();
     }
 }

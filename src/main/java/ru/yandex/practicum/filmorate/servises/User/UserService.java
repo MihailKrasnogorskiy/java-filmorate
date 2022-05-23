@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.servises;
+package ru.yandex.practicum.filmorate.servises.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +70,10 @@ public class UserService {
         if (user1.equals(user2)) {
             throw new ValidationException("User can't add or delete himself as \"friend\"");
         }
+    }
+
+    public User findUserById(Long id) {
+        return storage.getUserById(id);
     }
 
 }

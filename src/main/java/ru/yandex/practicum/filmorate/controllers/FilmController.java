@@ -5,8 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.servises.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.servises.film.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -20,7 +19,7 @@ public class FilmController {
     private final FilmService service;
 
     @Autowired
-    public FilmController(FilmStorage storage, FilmService service) {
+    public FilmController(FilmService service) {
         this.service = service;
     }
 
@@ -53,8 +52,8 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void delleteLikeToFilm(@PathVariable Long id, @PathVariable Long userId) {
-        service.addLikeToFilm(id, userId);
+    public void deleteLikeToFilm(@PathVariable Long id, @PathVariable Long userId) {
+        service.deleteLikeToFilm(id, userId);
     }
 
     //возвращает список из первых count фильмов по количеству лайков
@@ -62,5 +61,11 @@ public class FilmController {
 
     public List<Film> findBestFilms(@RequestParam(defaultValue = "10") Integer count) {
         return service.getSortedFilms(count);
+    }
+
+    //возвращаем фильм по id
+    @GetMapping("/{id}")
+    public Film findUserById(@PathVariable Long id) {
+        return service.findFilmById(id);
     }
 }

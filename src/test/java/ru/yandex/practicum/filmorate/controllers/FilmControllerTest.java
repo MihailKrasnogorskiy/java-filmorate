@@ -8,8 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,18 +20,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class FilmControllerTest {
-    @Autowired
-    ObjectMapper mapper;
     private final Film film = new Film(
             "Mission impossible",
             "Film with Tom Cycyruz",
             LocalDate.of(2000, 02, 22),
-            Duration.ofMinutes(200));
+            200);
     private final Film validFilm = new Film(
             "Mission impossible",
             "Film with Tom Cycyruz",
             LocalDate.of(2000, 02, 22),
-            Duration.ofMinutes(200));
+            200);
+    @Autowired
+    ObjectMapper mapper;
+    @Autowired
+    InMemoryFilmStorage storage;
     private String body;
     @Autowired
     private MockMvc mockMvc;
@@ -58,10 +60,10 @@ class FilmControllerTest {
     public void test2_createAndUpdateWithNotValidDuration() throws Exception {
         createEnvironment();
         //невалидная продлжительность post
-        film.setDuration(Duration.ZERO);
+        film.setDuration(0);
         body = mapper.writeValueAsString(film);
         postWithNotValidArguments(body);
-        film.setDuration(Duration.ofMinutes(-30));
+        film.setDuration(-30);
         body = mapper.writeValueAsString(film);
         postWithNotValidArguments(body);
         //невалидная продлжительность put
@@ -98,9 +100,8 @@ class FilmControllerTest {
 
     //создание окружения
     private void createEnvironment() throws Exception {
-        controller.getFilms().clear();
-        controller.setId(1);
         validFilm.setId(1);
+        storage.clear();
         body = mapper.writeValueAsString(film);
         postWithValidArguments(body);
         assertEquals(1, controller.findAll().size());

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class FoundException extends BusinessException{
+public class FoundException extends BusinessException {
 
     public FoundException(String s) {
         super(s);

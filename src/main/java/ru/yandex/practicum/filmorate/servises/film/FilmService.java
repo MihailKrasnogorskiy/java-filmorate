@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.servises;
+package ru.yandex.practicum.filmorate.servises.film;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,15 +25,15 @@ public class FilmService {
     public void addLikeToFilm(Long filmId, Long userId) {
         Film film = filmStorage.getFilmById(filmId);
         User user = userStorage.getUserById(userId);
-            film.getLikes().add(userId);
-            user.getLikedFilms().add(filmId);
+        film.getLikes().add(userId);
+        user.getLikedFilms().add(filmId);
     }
 
     public void deleteLikeToFilm(Long filmId, Long userId) {
         Film film = filmStorage.getFilmById(filmId);
         User user = userStorage.getUserById(userId);
-            film.getLikes().remove(userId);
-            user.getLikedFilms().remove(filmId);
+        film.getLikes().remove(userId);
+        user.getLikedFilms().remove(filmId);
     }
 
     public Film createFilm(Film film) {
@@ -56,6 +56,10 @@ public class FilmService {
                 .map(filmStorage::getFilmById)
                 .limit(size)
                 .collect(Collectors.toList());
+    }
+
+    public Film findFilmById(Long id) {
+        return filmStorage.getFilmById(id);
     }
 
 }

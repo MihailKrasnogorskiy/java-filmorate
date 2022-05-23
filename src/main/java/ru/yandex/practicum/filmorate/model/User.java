@@ -11,6 +11,7 @@ import java.util.Set;
 @Data
 //класс пользователя
 public class User {
+
     private long id;
     @NotNull
     @NotBlank

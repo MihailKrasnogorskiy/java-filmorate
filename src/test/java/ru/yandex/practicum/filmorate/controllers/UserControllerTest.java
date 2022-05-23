@@ -8,29 +8,34 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.servises.User.UserIdCreator;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class UserControllerTest {
-    @Autowired
-    ObjectMapper mapper;
     private final User user = new User(
             "mail@mail.ru",
             "TomCycyruz",
             "Tom",
-            LocalDate.of(1975, 06, 02));
+            LocalDate.of(1975, 6, 2));
     private final User validUser = new User(
             "mail@mail.ru",
             "TomCycyruz",
             "Tom",
-            LocalDate.of(1975, 06, 02));
+            LocalDate.of(1975, 6, 2));
+    @Autowired
+    ObjectMapper mapper;
+    @Autowired
+    UserIdCreator userIdCreator;
+    @Autowired
+    InMemoryUserStorage userStorage;
     private String body;
     @Autowired
     private MockMvc mockMvc;
@@ -50,6 +55,9 @@ class UserControllerTest {
         body = mapper.writeValueAsString(user);
         putWithValidArguments(body);
         assertEquals(user, controller.findAll().get(0));
+        //валидный get
+        this.mockMvc.perform(get("/users/1"))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -102,7 +110,8 @@ class UserControllerTest {
 
     //создание окружения
     private void createEnvironment() throws Exception {
-        controller.resetController();
+        userIdCreator.clear();
+        userStorage.clear();
         validUser.setId(1);
         body = mapper.writeValueAsString(user);
         postWithValidArguments(body);
@@ -139,5 +148,4 @@ class UserControllerTest {
         assertEquals(1, controller.findAll().size());
         assertEquals(validUser, controller.findAll().get(0));
     }
-
 }
