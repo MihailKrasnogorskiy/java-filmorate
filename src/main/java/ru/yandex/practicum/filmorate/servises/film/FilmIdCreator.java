@@ -12,6 +12,7 @@ public class FilmIdCreator {
         return id++;
     }
 
+    //сброс счётчика
     public void clear() {
         id = 1;
     }

@@ -30,6 +30,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         this.filmIdCreator = filmIdCreator;
     }
 
+    // создание фильма
     @Override
     public Film createFilm(Film film) {
         film.setId(filmIdCreator.generateId());
@@ -39,11 +40,13 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    //возвращение всех фильмов
     @Override
     public List<Film> findAllFilms() {
         return new ArrayList<>(films.values());
     }
 
+    //обновление фильма
     @Override
     public Film updateFilm(Film film) {
         if (film.getId() < 0) {
@@ -58,6 +61,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    //удаление фильма
     @Override
     public void deleteFilm(Film film) {
         if (!films.containsKey(film.getId())) {
@@ -68,15 +72,18 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.info("Delete film {}", film);
     }
 
+    //добавление фильмов в сортировку
     private void addFilmToSortedFilmSet(Long id) {
         sortedFilms.remove(id);
         sortedFilms.add(id);
     }
 
+    //возвращение сортированных фильмов
     public List<Long> getSortedFilms() {
         return new ArrayList<>(sortedFilms);
     }
 
+    //возвращение фильма по id
     @Override
     public Film getFilmById(Long id) {
         if (!films.containsKey(id)) {
@@ -85,6 +92,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
+    //очистка хранилища
     public void clear() {
         films.clear();
         sortedFilms.clear();

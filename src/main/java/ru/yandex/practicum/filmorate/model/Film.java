@@ -35,6 +35,7 @@ public class Film {
         this.duration = duration;
     }
 
+    //возвращаем лайки
     public Set<Long> getLikes() {
         return likes;
     }

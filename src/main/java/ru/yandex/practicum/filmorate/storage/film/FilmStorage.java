@@ -21,7 +21,6 @@ public interface FilmStorage {
     List<Long> getSortedFilms();
 
     //возвращение фильма по id
-
     Film getFilmById(Long id);
 
 }

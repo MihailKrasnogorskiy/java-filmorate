@@ -32,17 +32,13 @@ public class FilmController {
     @PostMapping
     //создание фильма
     public Film create(@Valid @RequestBody Film film) {
-        Film film1 = service.createFilm(film);
-        log.info("Create new film {}", film);
-        return film1;
+        return service.createFilm(film);
     }
 
     @PutMapping
     //обновление фильма
     public Film update(@Valid @RequestBody Film film) {
-        Film film1 = service.updateFilm(film);
-        log.info("Update film {}", film);
-        return film1;
+        return service.updateFilm(film);
     }
 
     //пользователь ставит лайк фильму
@@ -56,7 +52,7 @@ public class FilmController {
         service.deleteLikeToFilm(id, userId);
     }
 
-    //возвращает список из первых count фильмов по количеству лайков
+    //возвращает список из первых count фильмов по количеству лайков, значение по умолчанию 10
     @GetMapping("/popular")
 
     public List<Film> findBestFilms(@RequestParam(defaultValue = "10") Integer count) {

@@ -25,7 +25,7 @@ public class InMemoryUserStorage implements UserStorage {
         this.userIdCreator = userIdCreator;
     }
 
-
+    //создание пользователя
     @Override
     public User createUser(User user) {
         if (users.containsKey(user.getEmail())) {
@@ -38,11 +38,13 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    //возвращение всех пользователей
     @Override
     public List<User> findAll() {
         return new ArrayList<>(users.values());
     }
 
+    //обновление пользователя
     @Override
     public User updateUser(User user) {
         if (user.getId() <= 0) {
@@ -57,6 +59,7 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    //возвращение пользователя по id
     @Override
     public User getUserById(Long id) {
         if (!emailMaps.containsKey(id) || id <= 0) {
@@ -65,6 +68,7 @@ public class InMemoryUserStorage implements UserStorage {
         return users.get(emailMaps.get(id));
     }
 
+    //удалени пользователя
     @Override
     public void deleteUser(String email) {
         if (!users.containsKey(email) || email.equals("")) {
@@ -75,6 +79,7 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Delete user with email {}", email);
     }
 
+    //очистка хранилища
     public void clear() {
         users.clear();
         userIdCreator.clear();

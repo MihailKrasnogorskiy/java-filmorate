@@ -41,10 +41,12 @@ public class User {
         this.birthday = birthday;
     }
 
+    //возвращаем друзей
     public Set<Long> getFriends() {
         return friends;
     }
 
+    //возвращаем лайки фильмов
     public Set<Long> getLikedFilms() {
         return likedFilms;
     }
