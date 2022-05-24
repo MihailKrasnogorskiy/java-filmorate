@@ -61,7 +61,7 @@ public class FilmController {
 
     //возвращаем фильм по id
     @GetMapping("/{id}")
-    public Film findUserById(@PathVariable Long id) {
+    public Film findFilmById(@PathVariable Long id) {
         return service.findFilmById(id);
     }
 }
