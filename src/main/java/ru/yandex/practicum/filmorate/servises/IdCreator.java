@@ -1,10 +1,8 @@
-package ru.yandex.practicum.filmorate.servises.film;
+package ru.yandex.practicum.filmorate.servises;
 
-import org.springframework.stereotype.Service;
 
-@Service
 //класс для генерации ID
-public class FilmIdCreator {
+public class IdCreator {
     private long id = 1;
 
     //генерация ID

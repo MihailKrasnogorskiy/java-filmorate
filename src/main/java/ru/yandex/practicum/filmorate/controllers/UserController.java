@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.servises.User.UserService;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -18,28 +19,30 @@ import java.util.List;
 //REST контроллер
 public class UserController {
     private final UserService service;
+    private final UserStorage storage;
 
     @Autowired
-    public UserController(UserService service) {
+    public UserController(UserService service, UserStorage storage) {
         this.service = service;
+        this.storage = storage;
     }
 
     @GetMapping
     //возвращает список всех пользователей
     public List<User> findAll() {
-        return service.findAll();
+        return storage.findAll();
     }
 
     // создание пользователя
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        return service.createUser(user);
+        return storage.create(user);
     }
 
     // обновление пользователя
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-        return service.updateUser(user);
+        return storage.update(user);
     }
 
     //добавление в друзья
@@ -69,6 +72,6 @@ public class UserController {
     //возвращаем пользователя по id
     @GetMapping("/{id}")
     public User findUserById(@PathVariable Long id) {
-        return service.findUserById(id);
+        return storage.getById(id);
     }
 }

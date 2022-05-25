@@ -6,17 +6,17 @@ import java.util.List;
 
 public interface UserStorage {
     //добавление пользователя
-    User createUser(User user);
+    User create(User user);
 
     //поиск всех пользователей
     List<User> findAll();
 
     //обновление пользователя
-    User updateUser(User user);
+    User update(User user);
 
     //поиск пользователя по id
-    User getUserById(Long id);
+    User getById(Long id);
 
     //удаление пользователя по email
-    void deleteUser(String email);
+    void delete(String email);
 }

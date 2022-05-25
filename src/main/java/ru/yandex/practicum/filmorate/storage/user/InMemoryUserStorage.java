@@ -1,11 +1,10 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.servises.User.UserIdCreator;
+import ru.yandex.practicum.filmorate.servises.IdCreator;
 
 import javax.validation.ValidationException;
 import java.util.ArrayList;
@@ -16,18 +15,13 @@ import java.util.List;
 @Slf4j
 //класс реализация хранилища пользователей
 public class InMemoryUserStorage implements UserStorage {
-    private final UserIdCreator userIdCreator;
+    private final IdCreator userIdCreator = new IdCreator();
     private final HashMap<String, User> users = new HashMap<>();
     private final HashMap<Long, String> emailMaps = new HashMap<>();
 
-    @Autowired
-    public InMemoryUserStorage(UserIdCreator userIdCreator) {
-        this.userIdCreator = userIdCreator;
-    }
-
     //создание пользователя
     @Override
-    public User createUser(User user) {
+    public User create(User user) {
         if (users.containsKey(user.getEmail())) {
             throw new ValidationException("This email is used");
         }
@@ -46,7 +40,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     //обновление пользователя
     @Override
-    public User updateUser(User user) {
+    public User update(User user) {
         if (user.getId() <= 0) {
             throw new FoundException("This user is not registered");
         }
@@ -61,7 +55,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     //возвращение пользователя по id
     @Override
-    public User getUserById(Long id) {
+    public User getById(Long id) {
         if (!emailMaps.containsKey(id) || id <= 0) {
             throw new FoundException("User is not registered");
         }
@@ -70,7 +64,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     //удалени пользователя
     @Override
-    public void deleteUser(String email) {
+    public void delete(String email) {
         if (!users.containsKey(email) || email.equals("")) {
             throw new FoundException("User is not registered");
         }

@@ -6,21 +6,21 @@ import java.util.List;
 
 public interface FilmStorage {
     //добавление фильма
-    Film createFilm(Film film);
+    Film create(Film film);
 
     //поиск всех фильмов
-    List<Film> findAllFilms();
+    List<Film> findAll();
 
     //обновление фильма
-    Film updateFilm(Film film);
+    Film update(Film film);
 
     //удаление фильма
-    void deleteFilm(Film film);
+    void delete(Film film);
 
     //возвращение сортрованного списка фильмов
-    List<Long> getSortedFilms();
+    List<Long> getSorted();
 
     //возвращение фильма по id
-    Film getFilmById(Long id);
+    Film getById(Long id);
 
 }

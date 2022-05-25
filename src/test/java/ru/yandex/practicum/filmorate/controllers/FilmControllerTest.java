@@ -34,7 +34,7 @@ class FilmControllerTest {
             "Mission impossible2",
             "Film with Tom Cycyruz",
             LocalDate.of(2002, 4, 22),
-            200);
+            20);
     private final User user = new User(
             "mail@mail.ru",
             "TomCycyruz",
@@ -127,18 +127,18 @@ class FilmControllerTest {
         createEnvironment();
         mockMvc.perform(put("/films/1/like/1"))
                 .andExpect(status().isOk());
-        final Long filmId = userStorage.getUserById(1L).getLikedFilms().stream().findFirst().get();
-        final Long userId = storage.getFilmById(1L).getLikes().stream().findFirst().get();
-        assertFalse(userStorage.getUserById(1L).getLikedFilms().isEmpty());
-        assertEquals(1, userStorage.getUserById(1L).getLikedFilms().size());
+        final Long filmId = userStorage.getById(1L).getLikedFilms().stream().findFirst().get();
+        final Long userId = storage.getById(1L).getLikes().stream().findFirst().get();
+        assertFalse(userStorage.getById(1L).getLikedFilms().isEmpty());
+        assertEquals(1, userStorage.getById(1L).getLikedFilms().size());
         assertEquals(1, userId);
-        assertFalse(storage.getFilmById(1L).getLikes().isEmpty());
-        assertEquals(1, storage.getFilmById(1L).getLikes().size());
+        assertFalse(storage.getById(1L).getLikes().isEmpty());
+        assertEquals(1, storage.getById(1L).getLikes().size());
         assertEquals(1, filmId);
         mockMvc.perform(delete("/films/1/like/1"))
                 .andExpect(status().isOk());
-        assertTrue(userStorage.getUserById(1L).getLikedFilms().isEmpty());
-        assertTrue(storage.getFilmById(1L).getLikes().isEmpty());
+        assertTrue(userStorage.getById(1L).getLikedFilms().isEmpty());
+        assertTrue(storage.getById(1L).getLikes().isEmpty());
     }
 
     //возвращение фильмов по популярности

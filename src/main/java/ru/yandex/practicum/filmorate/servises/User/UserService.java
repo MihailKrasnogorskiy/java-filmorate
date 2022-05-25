@@ -26,8 +26,8 @@ public class UserService {
 
     //добавление пользователя в друзья
     public void addFriendToFriendsSet(Long id1, Long id2) {
-        User user1 = storage.getUserById(id1);
-        User user2 = storage.getUserById(id2);
+        User user1 = storage.getById(id1);
+        User user2 = storage.getById(id2);
         validationUsers(user1, user2);
         user1.getFriends().add(user2.getId());
         user2.getFriends().add(user1.getId());
@@ -36,8 +36,8 @@ public class UserService {
 
     // удаление пользователя из друзей
     public void deleteFriendToFriendsSet(Long id1, Long id2) {
-        User user1 = storage.getUserById(id1);
-        User user2 = storage.getUserById(id2);
+        User user1 = storage.getById(id1);
+        User user2 = storage.getById(id2);
         validationUsers(user1, user2);
         user1.getFriends().remove(user2.getId());
         user2.getFriends().remove(user1.getId());
@@ -46,35 +46,20 @@ public class UserService {
 
     // вывод общих друзей
     public List<User> findCommonFriends(Long id1, Long id2) {
-        User user1 = storage.getUserById(id1);
-        User user2 = storage.getUserById(id2);
+        User user1 = storage.getById(id1);
+        User user2 = storage.getById(id2);
         Set<Long> commonFriends = new HashSet<>(user1.getFriends());
         commonFriends.retainAll(user2.getFriends());
 
         return commonFriends.stream()
-                .map(storage::getUserById)
+                .map(storage::getById)
                 .collect(Collectors.toList());
-    }
-
-    // возвращение всех пользователей
-    public List<User> findAll() {
-        return storage.findAll();
-    }
-
-    //создание пользователя
-    public User createUser(User user) {
-        return storage.createUser(user);
-    }
-
-    //обновление пользователя
-    public User updateUser(User user) {
-        return storage.updateUser(user);
     }
 
     //возвращение друзей
     public List<User> getFriends(Long id) {
-        return storage.getUserById(id).getFriends().stream()
-                .map(storage::getUserById)
+        return storage.getById(id).getFriends().stream()
+                .map(storage::getById)
                 .collect(Collectors.toList());
     }
 
@@ -84,10 +69,4 @@ public class UserService {
             throw new ValidationException("User can't add or delete himself as \"friend\"");
         }
     }
-
-    // возвращение пользователя по id
-    public User findUserById(Long id) {
-        return storage.getUserById(id);
-    }
-
 }

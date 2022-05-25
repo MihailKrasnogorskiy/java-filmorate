@@ -27,8 +27,8 @@ public class FilmService {
 
     //добавление лайков
     public void addLikeToFilm(Long filmId, Long userId) {
-        Film film = filmStorage.getFilmById(filmId);
-        User user = userStorage.getUserById(userId);
+        Film film = filmStorage.getById(filmId);
+        User user = userStorage.getById(userId);
         film.getLikes().add(userId);
         user.getLikedFilms().add(filmId);
         log.info("Film  id : {} liked user id : {}", filmId, userId);
@@ -36,26 +36,11 @@ public class FilmService {
 
     //удаление лайков
     public void deleteLikeToFilm(Long filmId, Long userId) {
-        Film film = filmStorage.getFilmById(filmId);
-        User user = userStorage.getUserById(userId);
+        Film film = filmStorage.getById(filmId);
+        User user = userStorage.getById(userId);
         film.getLikes().remove(userId);
         user.getLikedFilms().remove(filmId);
         log.info("User  id : {} delete like to film id : {}", userId, filmId);
-    }
-
-    //создание фильма
-    public Film createFilm(Film film) {
-        return filmStorage.createFilm(film);
-    }
-
-    //обновление фильма
-    public Film updateFilm(Film film) {
-        return filmStorage.updateFilm(film);
-    }
-
-    //возвращеие всех фильмов
-    public List<Film> findAllFilms() {
-        return filmStorage.findAllFilms();
     }
 
     //возвращение популярных фильмов
@@ -63,15 +48,9 @@ public class FilmService {
         if (size < 0) {
             throw new ValidationException("The number of films must be positive");
         }
-        return filmStorage.getSortedFilms().stream()
-                .map(filmStorage::getFilmById)
+        return filmStorage.getSorted().stream()
+                .map(filmStorage::getById)
                 .limit(size)
                 .collect(Collectors.toList());
     }
-
-    //возвращение фильма по id
-    public Film findFilmById(Long id) {
-        return filmStorage.getFilmById(id);
-    }
-
 }

@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.servises.User.UserIdCreator;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
@@ -47,8 +46,6 @@ class UserControllerTest {
             LocalDate.of(1975, 6, 2));
     @Autowired
     ObjectMapper mapper;
-    @Autowired
-    UserIdCreator userIdCreator;
     @Autowired
     InMemoryUserStorage userStorage;
     private String body;
@@ -133,14 +130,14 @@ class UserControllerTest {
         postWithValidArguments(body);
         mockMvc.perform(put("/users/1/friends/2"))
                 .andExpect(status().isOk());
-        final Long id1 = userStorage.getUserById(1L).getFriends().stream().findFirst().get();
-        final Long id2 = userStorage.getUserById(2L).getFriends().stream().findFirst().get();
+        final Long id1 = userStorage.getById(1L).getFriends().stream().findFirst().get();
+        final Long id2 = userStorage.getById(2L).getFriends().stream().findFirst().get();
         assertEquals(2, id1);
         assertEquals(1, id2);
         mockMvc.perform(delete("/users/1/friends/2"))
                 .andExpect(status().isOk());
-        assertTrue(userStorage.getUserById(1L).getFriends().isEmpty());
-        assertTrue(userStorage.getUserById(2L).getFriends().isEmpty());
+        assertTrue(userStorage.getById(1L).getFriends().isEmpty());
+        assertTrue(userStorage.getById(2L).getFriends().isEmpty());
     }
 
     //выдача общих друзей
