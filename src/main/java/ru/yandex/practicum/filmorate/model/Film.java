@@ -3,11 +3,13 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Data;
 
 import javax.validation.ValidationException;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
-import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Data
@@ -20,24 +22,29 @@ public class Film {
     private String description;
     @Past
     private LocalDate releaseDate;
-    private Duration duration;
+    @Min(1)
+    private int duration;
 
-    public Film(String name, String description, LocalDate releaseDate, Duration duration) {
-        validation(releaseDate, duration);
+    private Set<Long> likes = new HashSet<>();
+
+    public Film(String name, String description, LocalDate releaseDate, Integer duration) {
+        validation(releaseDate);
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
     }
 
-    //валидация даты и продолжительности
-    void validation(LocalDate releaseDate, Duration duration) {
+    //возвращаем лайки
+    public Set<Long> getLikes() {
+        return likes;
+    }
+
+    //валидация даты
+    void validation(LocalDate releaseDate) {
         final LocalDate firstFilmPresentation = LocalDate.of(1895, 12, 28);
         if (releaseDate.isBefore(firstFilmPresentation)) {
             throw new ValidationException("This date is before 12/28/1895");
-        }
-        if (duration.isNegative() || duration.isZero()) {
-            throw new ValidationException("Duration is not positive");
         }
     }
 }

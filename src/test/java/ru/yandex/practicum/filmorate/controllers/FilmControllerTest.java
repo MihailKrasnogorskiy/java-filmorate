@@ -8,31 +8,51 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
-import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class FilmControllerTest {
-    private Film film = new Film(
+    private final Film film = new Film(
             "Mission impossible",
             "Film with Tom Cycyruz",
-            LocalDate.of(2000, 02, 22),
-            Duration.ofMinutes(200));
-    private Film validFilm = new Film(
+            LocalDate.of(2000, 2, 22),
+            200);
+
+    private final Film film1 = new Film(
+            "Mission impossible2",
+            "Film with Tom Cycyruz",
+            LocalDate.of(2002, 4, 22),
+            20);
+    private final User user = new User(
+            "mail@mail.ru",
+            "TomCycyruz",
+            "Tom",
+            LocalDate.of(1975, 6, 2));
+
+    private final Film validFilm = new Film(
             "Mission impossible",
             "Film with Tom Cycyruz",
-            LocalDate.of(2000, 02, 22),
-            Duration.ofMinutes(200));
-    private String body;
+            LocalDate.of(2000, 2, 22),
+            200);
     @Autowired
     ObjectMapper mapper;
+    @Autowired
+    InMemoryFilmStorage storage;
+    @Autowired
+    InMemoryUserStorage userStorage;
+    private String body;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -51,6 +71,10 @@ class FilmControllerTest {
         body = mapper.writeValueAsString(film);
         putWithValidArguments(body);
         assertEquals(film, controller.findAll().get(0));
+        //валидный get по id
+        this.mockMvc.perform(get("/films/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(body));
     }
 
     @Test
@@ -58,10 +82,10 @@ class FilmControllerTest {
     public void test2_createAndUpdateWithNotValidDuration() throws Exception {
         createEnvironment();
         //невалидная продлжительность post
-        film.setDuration(Duration.ZERO);
+        film.setDuration(0);
         body = mapper.writeValueAsString(film);
         postWithNotValidArguments(body);
-        film.setDuration(Duration.ofMinutes(-30));
+        film.setDuration(-30);
         body = mapper.writeValueAsString(film);
         postWithNotValidArguments(body);
         //невалидная продлжительность put
@@ -84,6 +108,7 @@ class FilmControllerTest {
         putWithNotValidArguments(film);
     }
 
+
     @Test
     //неверная дата релиза
     public void test4_createAndUpdateWithNotValidDate() throws Exception {
@@ -96,13 +121,67 @@ class FilmControllerTest {
         putWithNotValidArguments(film);
     }
 
+    //отметка и удаление отметки понравившемуся фильму
+    @Test
+    public void test13_addAndDeleteLike() throws Exception {
+        createEnvironment();
+        mockMvc.perform(put("/films/1/like/1"))
+                .andExpect(status().isOk());
+        final Long filmId = userStorage.getById(1L).getLikedFilms().stream().findFirst().get();
+        final Long userId = storage.getById(1L).getLikes().stream().findFirst().get();
+        assertFalse(userStorage.getById(1L).getLikedFilms().isEmpty());
+        assertEquals(1, userStorage.getById(1L).getLikedFilms().size());
+        assertEquals(1, userId);
+        assertFalse(storage.getById(1L).getLikes().isEmpty());
+        assertEquals(1, storage.getById(1L).getLikes().size());
+        assertEquals(1, filmId);
+        mockMvc.perform(delete("/films/1/like/1"))
+                .andExpect(status().isOk());
+        assertTrue(userStorage.getById(1L).getLikedFilms().isEmpty());
+        assertTrue(storage.getById(1L).getLikes().isEmpty());
+    }
+
+    //возвращение фильмов по популярности
+    @Test
+    public void test14_getPopularFilms() throws Exception {
+        createEnvironment();
+        mockMvc.perform(put("/films/1/like/1"))
+                .andExpect(status().isOk());
+        body = mapper.writeValueAsString(film1);
+        postWithValidArguments(body);
+        film.setId(1);
+        film.getLikes().add(1L);
+        film1.setId(2);
+        List<Film> sorted = new ArrayList<>();
+        sorted.add(film);
+        sorted.add(film1);
+        body = mapper.writeValueAsString(sorted);
+        mockMvc.perform(get("/films/popular"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(body));
+        mockMvc.perform(get("/films/popular?count=2"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(body));
+        sorted.remove(1);
+        body = mapper.writeValueAsString(sorted);
+        mockMvc.perform(get("/films/popular?count=1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(body));
+
+    }
+
     //создание окружения
     private void createEnvironment() throws Exception {
-        controller.getFilms().clear();
-        controller.setId(1);
+        storage.clear();
+        userStorage.clear();
         validFilm.setId(1);
+        storage.clear();
         body = mapper.writeValueAsString(film);
         postWithValidArguments(body);
+        body = mapper.writeValueAsString(user);
+        this.mockMvc.perform(post("/users").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        user.setId(1L);
         assertEquals(1, controller.findAll().size());
         assertEquals(validFilm, controller.findAll().get(0));
     }

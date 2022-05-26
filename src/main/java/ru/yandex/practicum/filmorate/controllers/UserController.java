@@ -1,14 +1,14 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.servises.User.UserService;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -18,49 +18,60 @@ import java.util.List;
 
 //REST контроллер
 public class UserController {
-    private long id = 1;
-    private final HashMap<String, User> users = new HashMap<>();
-    private final HashMap<Long, String> emailMaps = new HashMap<>();
+    private final UserService service;
+    private final UserStorage storage;
+
+    @Autowired
+    public UserController(UserService service, UserStorage storage) {
+        this.service = service;
+        this.storage = storage;
+    }
 
     @GetMapping
     //возвращает список всех пользователей
     public List<User> findAll() {
-        return new ArrayList<>(users.values());
+        return storage.findAll();
     }
 
     // создание пользователя
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        if (users.containsKey(user.getEmail())) {
-            throw new ValidationException("This email is used");
-        }
-        user.setId(generateId());
-        emailMaps.put(user.getId(), user.getEmail());
-        users.put(user.getEmail(), user);
-        log.info("Create new user {}", user);
-        return user;
+        return storage.create(user);
     }
 
     // обновление пользователя
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-        if (emailMaps.containsKey(user.getId()) && !(emailMaps.get(user.getId()).equals(user.getEmail()))) {
-            users.remove(emailMaps.get(user.getId()));
-        }
-        emailMaps.put(user.getId(), user.getEmail());
-        users.put(user.getEmail(), user);
-        log.info("Update user {}", user);
-        return user;
+        return storage.update(user);
     }
 
-    // создание id
-    private long generateId() {
-        return id++;
+    //добавление в друзья
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        service.addFriendToFriendsSet(id, friendId);
     }
 
-    public void resetController(){
-        id = 1;
-        users.clear();
-        emailMaps.clear();
+    //удаление из друзей
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        service.deleteFriendToFriendsSet(id, friendId);
+    }
+
+    //возвращаем список пользователей, являющихся его друзьями
+    @GetMapping("/{id}/friends")
+    public List<User> findFriends(@PathVariable Long id) {
+        return service.getFriends(id);
+    }
+
+    //список друзей, общих с другим пользователем
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> findCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return service.findCommonFriends(id, otherId);
+    }
+
+    //возвращаем пользователя по id
+    @GetMapping("/{id}")
+    public User findUserById(@PathVariable Long id) {
+        return storage.getById(id);
     }
 }

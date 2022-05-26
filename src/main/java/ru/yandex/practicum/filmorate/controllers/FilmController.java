@@ -1,13 +1,14 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.servises.film.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -16,45 +17,54 @@ import java.util.List;
 @Slf4j
 //класс REST контроллера
 public class FilmController {
-    private final HashMap<Long, Film> films = new HashMap<>();
-    private long id = 1;
+    private final FilmService service;
+    private final FilmStorage storage;
 
-    public HashMap<Long, Film> getFilms() {
-        return films;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+    @Autowired
+    public FilmController(FilmService service, FilmStorage storage) {
+        this.service = service;
+        this.storage = storage;
     }
 
     @GetMapping
     //возвращение списка фильмов
     public List<Film> findAll() {
-        return new ArrayList<>(films.values());
+        return storage.findAll();
     }
 
     @PostMapping
     //создание фильма
     public Film create(@Valid @RequestBody Film film) {
-        film.setId(generateId());
-        films.put(film.getId(), film);
-        log.info("Create new film {}", film);
-        return film;
+        return storage.create(film);
     }
 
     @PutMapping
     //обновление фильма
     public Film update(@Valid @RequestBody Film film) {
-        if (!films.containsKey(film.getId())) {
-            throw new IllegalArgumentException("If you want to create film use HTTP method POST");
-        }
-        films.put(film.getId(), film);
-        log.info("Update film {}", film);
-        return film;
+        return storage.update(film);
     }
 
-    // создание id
-    private long generateId() {
-        return id++;
+    //пользователь ставит лайк фильму
+    @PutMapping("/{id}/like/{userId}")
+    public void addLikeToFilm(@PathVariable Long id, @PathVariable Long userId) {
+        service.addLikeToFilm(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLikeToFilm(@PathVariable Long id, @PathVariable Long userId) {
+        service.deleteLikeToFilm(id, userId);
+    }
+
+    //возвращает список из первых count фильмов по количеству лайков, значение по умолчанию 10
+    @GetMapping("/popular")
+
+    public List<Film> findBestFilms(@RequestParam(defaultValue = "10") Integer count) {
+        return service.getSortedFilms(count);
+    }
+
+    //возвращаем фильм по id
+    @GetMapping("/{id}")
+    public Film findFilmById(@PathVariable Long id) {
+        return storage.getById(id);
     }
 }
