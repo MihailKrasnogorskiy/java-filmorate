@@ -4,11 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.films.Film;
+import ru.yandex.practicum.filmorate.model.films.mpa.Mpa;
+import ru.yandex.practicum.filmorate.model.films.mpa.enumMpa;
 import ru.yandex.practicum.filmorate.servises.film.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -19,6 +22,14 @@ import java.util.List;
 public class FilmController {
     private final FilmService service;
     private final FilmStorage storage;
+
+    Mpa mpa = new Mpa(1, enumMpa.G);
+    Film film = new Film(
+            "Mission impossible",
+            "Film with Tom Cycyruz",
+            LocalDate.of(2000, 2, 22),
+            200,
+            mpa);
 
     @Autowired
     public FilmController(FilmService service, FilmStorage storage) {
@@ -34,9 +45,12 @@ public class FilmController {
 
     @PostMapping
     //создание фильма
-    public Film create(@Valid @RequestBody Film film) {
+    public Film create(){
         return storage.create(film);
     }
+//    public Film create(@Valid @RequestBody Film film) {
+//        return storage.create(film);
+//    }
 
     @PutMapping
     //обновление фильма

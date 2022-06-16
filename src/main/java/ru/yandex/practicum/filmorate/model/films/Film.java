@@ -1,6 +1,8 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model.films;
 
 import lombok.Data;
+import ru.yandex.practicum.filmorate.model.films.genre.Genre;
+import ru.yandex.practicum.filmorate.model.films.mpa.Mpa;
 
 import javax.validation.ValidationException;
 import javax.validation.constraints.Min;
@@ -25,6 +27,10 @@ public class Film {
     @Min(1)
     private int duration;
 
+    private Mpa mpa;
+
+    private Genre genre;
+
     private Set<Long> likes = new HashSet<>();
 
     public Film(String name, String description, LocalDate releaseDate, Integer duration) {
@@ -33,6 +39,14 @@ public class Film {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+    }
+
+    public Film(String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = mpa;
     }
 
     //возвращаем лайки
