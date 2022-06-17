@@ -1,30 +1,23 @@
-INSERT INTO TO ratings (rating_id, rating)
-    VALUES (1,'G')
-;
-INSERT INTO TO ratings (rating_id, rating)
-VALUES (2,'PG')
-;
-INSERT INTO TO ratings (rating_id, rating)
-VALUES (3,'PG13')
-;
-INSERT INTO TO ratings (rating_id, rating)
-VALUES (4,'R')
-;
-INSERT INTO TO ratings (rating_id, rating)
-VALUES (5,'NC17')
-;
-INSERT INTO TO ganres (genre_id, genre)
-VALUES (1,'Комедия')
-;
-INSERT INTO TO ratings (genre_id, genre)
-VALUES (2,'Драма')
-;
-INSERT INTO TO ratings (genre_id, genre)
-VALUES (3,'Мультфильм')
-;
-INSERT INTO TO ratings (genre_id, genre)
-VALUES (4,'Триллер')
-;
-INSERT INTO TO ratings (genre_id, genre)
-VALUES (5,'Документальный')
-;
+MERGE INTO ratings
+    (rating_id, rating)
+    KEY (rating_id)
+    VALUES (1, 'G'),
+    (2, 'PG'),
+    (3, 'PG13'),
+    (4, 'R'),
+    (5, 'NC17');
+
+MERGE INTO genres
+    (genre_id, genre)
+    KEY (genre_id)
+    VALUES (1, 'Комедия'),
+    (2, 'Драма'),
+    (3, 'Мультфильм'),
+    (4, 'Триллер'),
+    (5, 'Документальный');
+
+MERGE INTO friendship_status
+    (status_id, status)
+    KEY (status_id)
+    VALUES (1, 'Дружба'),
+    (2, 'Подписка');

@@ -1,60 +1,52 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.films.Film;
+import ru.yandex.practicum.filmorate.model.films.mpa.Mpa;
+import ru.yandex.practicum.filmorate.storage.film.mpa.MpaDao;
 
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 
 @Component
-@Primary
-public class FilmDao implements FilmStorage {
+public class FilmDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final MpaDao mpaDao;
 
-    public FilmDao(JdbcTemplate jdbcTemplate) {
+    public FilmDao(JdbcTemplate jdbcTemplate, MpaDao mpaDao) {
         this.jdbcTemplate = jdbcTemplate;
+        this.mpaDao = mpaDao;
     }
 
-
-    @Override
     public Film create(Film film) {
-
-        String sqlQuery1 = "insert into films (name, description, release_date, duration, rating_id) " +
+        String sqlQuery = "insert into films (name, description, release_date, duration, rating_id) " +
                 "values (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sqlQuery1,
+        jdbcTemplate.update(sqlQuery,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
                 film.getMpa().getId());
-
-        return null;
+        sqlQuery = "select film_id from films order by film_id desc limit 1 ";
+        long filmId = jdbcTemplate.queryForObject(sqlQuery, Integer.class);
+        return getById(filmId);
     }
 
-    @Override
-    public List<Film> findAll() {
-        return null;
-    }
-
-    @Override
-    public Film update(Film film) {
-        return null;
-    }
-
-    @Override
-    public void delete(Film film) {
-
-    }
-
-    @Override
-    public List<Long> getSorted() {
-        return null;
-    }
-
-    @Override
     public Film getById(Long id) {
-        return null;
+        String sqlQuery = "select * from films where film_id = ?";
+        return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> makeFilm(id, rs), id);
+    }
+
+    private Film makeFilm(Long id, ResultSet rs) throws SQLException {
+        String name = rs.getString("name");
+        String description = rs.getString("description");
+        LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
+        int duration = rs.getInt("duration");
+        int ratingId = rs.getInt("rating_id");
+        Mpa mpa = mpaDao.get(ratingId);
+        return new Film(id, name, description, releaseDate, duration, mpa);
     }
 }

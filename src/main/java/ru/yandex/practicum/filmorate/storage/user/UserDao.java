@@ -4,7 +4,7 @@ import ru.yandex.practicum.filmorate.model.users.User;
 
 import java.util.List;
 
-public class UserDao implements UserStorage{
+public class UserDao implements UserStorage {
     @Override
     public User create(User user) {
         return null;

@@ -1,9 +1,19 @@
 package ru.yandex.practicum.filmorate.model.films.genre;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Getter;
 
-@Data
+@Getter
 public class Genre {
     private final int id;
-    private final Genres genre;
+    private Genres name;
+
+    @JsonCreator
+    public Genre(int id) {
+        this.id = id;
+    }
+
+    public void setName(Genres name) {
+        this.name = name;
+    }
 }

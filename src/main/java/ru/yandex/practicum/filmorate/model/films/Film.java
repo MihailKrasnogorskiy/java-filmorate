@@ -26,27 +26,36 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
-
     private Mpa mpa;
 
-    private Genre genre;
+    private Genre genres;
 
     private Set<Long> likes = new HashSet<>();
 
-    public Film(String name, String description, LocalDate releaseDate, Integer duration) {
-        validation(releaseDate);
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-    }
+    //    public Film(String name, String description, LocalDate releaseDate, Integer duration) {
+    //        validation(releaseDate);
+    //        this.name = name;
+    //        this.description = description;
+    //        this.releaseDate = releaseDate;
+    //        this.duration = duration;
+    //    }
 
-    public Film(String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
+    //    public Film(String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
+    //        this.name = name;
+    //        this.description = description;
+    //        this.releaseDate = releaseDate;
+    //        this.duration = duration;
+    //        this.mpa = mpa;
+    //    }
+
+    public Film(long id, String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.mpa = mpa;
+        this.genres = null;
     }
 
     //возвращаем лайки
