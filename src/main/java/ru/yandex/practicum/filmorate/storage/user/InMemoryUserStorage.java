@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.model.users.User;
-import ru.yandex.practicum.filmorate.servises.IdCreator;
+import ru.yandex.practicum.filmorate.services.IdCreator;
 
 import javax.validation.ValidationException;
 import java.util.ArrayList;
@@ -60,6 +60,16 @@ public class InMemoryUserStorage implements UserStorage {
             throw new FoundException("User is not registered");
         }
         return users.get(emailMaps.get(id));
+    }
+
+    @Override
+    public void saveLike(long filmId, long userId) {
+
+    }
+
+    @Override
+    public void deleteLike(long filmId, long userId) {
+
     }
 
     //удалени пользователя

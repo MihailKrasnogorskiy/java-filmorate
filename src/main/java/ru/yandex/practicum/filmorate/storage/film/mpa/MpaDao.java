@@ -3,11 +3,9 @@ package ru.yandex.practicum.filmorate.storage.film.mpa;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.films.mpa.Mpa;
-import ru.yandex.practicum.filmorate.model.films.mpa.enumMpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.stream.Stream;
 
 @Component
 public class MpaDao {
@@ -24,12 +22,8 @@ public class MpaDao {
 
     private Mpa makeMpa(int id, ResultSet rs) throws SQLException {
         String ratingString = rs.getString("rating");
-        enumMpa rating = Stream.of(enumMpa.values())
-                .filter(s -> s.toString().equals(ratingString))
-                .findFirst()
-                .get();
         Mpa mpa = new Mpa(id);
-        mpa.setName(rating);
+        mpa.setName(ratingString);
         return mpa;
     }
 }

@@ -17,10 +17,10 @@ public interface FilmStorage {
     //удаление фильма
     void delete(Film film);
 
-    //возвращение сортрованного списка фильмов
-    List<Long> getSorted();
-
     //возвращение фильма по id
     Film getById(Long id);
 
+    void saveLike(long filmId, long userId);
+
+    void deleteLike(long filmId, long userId);
 }

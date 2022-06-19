@@ -6,14 +6,14 @@ import lombok.Getter;
 @Getter
 public class Mpa {
     private final int id;
-    private enumMpa name;
+    private String name;
 
     @JsonCreator
     public Mpa(int id) {
         this.id = id;
     }
 
-    public void setName(enumMpa name) {
+    public void setName(String name) {
         this.name = name;
     }
 }

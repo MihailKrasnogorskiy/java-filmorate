@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.servises.User;
+package ru.yandex.practicum.filmorate.services.User;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.servises.film;
+package ru.yandex.practicum.filmorate.services.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +31,7 @@ public class FilmService {
         User user = userStorage.getById(userId);
         film.getLikes().add(userId);
         user.getLikedFilms().add(filmId);
+        filmStorage.saveLike(filmId, userId);
         log.info("Film  id : {} liked user id : {}", filmId, userId);
     }
 
@@ -40,6 +41,7 @@ public class FilmService {
         User user = userStorage.getById(userId);
         film.getLikes().remove(userId);
         user.getLikedFilms().remove(filmId);
+        filmStorage.deleteLike(filmId, userId);
         log.info("User  id : {} delete like to film id : {}", userId, filmId);
     }
 
@@ -48,8 +50,8 @@ public class FilmService {
         if (size < 0) {
             throw new ValidationException("The number of films must be positive");
         }
-        return filmStorage.getSorted().stream()
-                .map(filmStorage::getById)
+        return filmStorage.findAll().stream()
+                .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
                 .limit(size)
                 .collect(Collectors.toList());
     }

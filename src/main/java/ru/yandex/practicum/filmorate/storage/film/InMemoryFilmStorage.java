@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.exceptions.IllegalHttpMethodException;
 import ru.yandex.practicum.filmorate.model.films.Film;
-import ru.yandex.practicum.filmorate.servises.IdCreator;
+import ru.yandex.practicum.filmorate.services.IdCreator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,6 +85,16 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new FoundException("This film is not found");
         }
         return films.get(id);
+    }
+
+    @Override
+    public void saveLike(long filmId, long userId) {
+
+    }
+
+    @Override
+    public void deleteLike(long filmId, long userId) {
+
     }
 
     //очистка хранилища

@@ -11,12 +11,14 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
 @Data
 //класс фильм
 public class Film {
+
     private long id;
     @NotBlank
     private String name;
@@ -26,9 +28,10 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
+
     private Mpa mpa;
 
-    private Genre genres;
+    private List<Genre> genres;
 
     private Set<Long> likes = new HashSet<>();
 
@@ -48,14 +51,17 @@ public class Film {
     //        this.mpa = mpa;
     //    }
 
-    public Film(long id, String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
+    public Film(long id, String name, String description, LocalDate releaseDate, int duration, Mpa mpa
+            , List<Genre> genres) {
+        validation(releaseDate);
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.mpa = mpa;
-        this.genres = null;
+        this.genres = genres;
+
     }
 
     //возвращаем лайки

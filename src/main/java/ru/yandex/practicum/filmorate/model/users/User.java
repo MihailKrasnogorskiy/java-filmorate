@@ -30,7 +30,8 @@ public class User {
 
     private Set<Long> likedFilms = new HashSet<>();
 
-    public User(String email, String login, String name, LocalDate birthday) {
+    public User(long id, String email, String login, String name, LocalDate birthday) {
+        this.id = id;
         this.email = email;
         this.login = login;
         if (name.isBlank()) {
