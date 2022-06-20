@@ -20,7 +20,9 @@ public interface FilmStorage {
     //возвращение фильма по id
     Film getById(Long id);
 
+    //сохранение лайка
     void saveLike(long filmId, long userId);
 
+    //удаление лайка
     void deleteLike(long filmId, long userId);
 }

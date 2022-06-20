@@ -17,20 +17,21 @@ public interface UserStorage {
     //поиск пользователя по id
     User getById(Long id);
 
-    void saveLike(long filmId, long userId);
-
-    void deleteLike(long filmId, long userId);
-
     //удаление пользователя по email
     void delete(String email);
 
+    //сохранение друга
     void saveFriend(long userId, long friendId);
 
+    //сохранение подписчика
     void saveSubscriber(long userId, long subscriberId);
 
+    //удаление друга
     void deleteFriend(long userId, long subscriberId);
 
+    //возвращение списка друзей
     List<Long> getUserFriends(long id);
 
+    //возвращение списка подписчиков
     List<Long> getUserSubscribers(long id);
 }

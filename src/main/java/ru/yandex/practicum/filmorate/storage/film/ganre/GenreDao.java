@@ -57,8 +57,7 @@ public class GenreDao {
     public void saveFilmGenres(List<Genre> genres, long filmId) {
         String sqlQuery = "merge into film_genres (film_id, genre_id) key(film_id, genre_id) " +
                 "values (?, ?)";
-        genres.stream()
-                .forEach(s -> jdbcTemplate.update(sqlQuery, filmId, s.getId()));
+        genres.forEach(s -> jdbcTemplate.update(sqlQuery, filmId, s.getId()));
     }
 
     public void updateFilmsGenres(Film film) {

@@ -57,7 +57,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-        idValidation(film.getId());
+        filmIdValidation(film.getId());
         if (film.getMpa() == null) {
             throw new ValidationException("MPA can't be null");
         }
@@ -74,7 +74,7 @@ public class FilmDbStorage implements FilmStorage {
             genreDao.updateFilmsGenres(film);
             if (film.getGenres().isEmpty()) {
                 film = getById(film.getId());
-                film.setGenres(new ArrayList<Genre>());
+                film.setGenres(new ArrayList<>());
                 return film;
             }
         }
@@ -83,7 +83,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void delete(Film film) {
-        idValidation(film.getId());
+        filmIdValidation(film.getId());
         String sqlQuery = "delete from films where film_id = ?";
         jdbcTemplate.update(sqlQuery, film.getId());
     }
@@ -97,18 +97,22 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getById(Long id) {
-        idValidation(id);
+        filmIdValidation(id);
         String sqlQuery = "select * from films where film_id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> makeFilm(rs), id);
     }
 
     @Override
     public void saveLike(long filmId, long userId) {
+        filmIdValidation(filmId);
+        userIdValidation(userId);
         likesDao.saveLike(filmId, userId);
     }
 
     @Override
     public void deleteLike(long filmId, long userId) {
+        filmIdValidation(filmId);
+        userIdValidation(userId);
         likesDao.deleteLike(filmId, userId);
     }
 
@@ -132,12 +136,21 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    private void idValidation(long id) {
+    private void filmIdValidation(long id) {
         List<Integer> filmIds;
         String sqlQuery = "select film_id from films";
         filmIds = jdbcTemplate.queryForList(sqlQuery, Integer.class);
         if (!filmIds.contains((int) id)) {
             throw new FoundException("Unknown film");
+        }
+    }
+
+    private void userIdValidation(long id) {
+        List<Integer> userIds;
+        String sqlQuery = "select user_id from users";
+        userIds = jdbcTemplate.queryForList(sqlQuery, Integer.class);
+        if (!userIds.contains((int) id)) {
+            throw new FoundException("Unknown user");
         }
     }
 }

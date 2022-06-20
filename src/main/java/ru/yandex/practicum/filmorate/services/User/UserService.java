@@ -25,33 +25,31 @@ public class UserService {
     }
 
     //добавление пользователя в друзья
-    public void addFriendToFriendsSet(Long id1, Long id2) {
-        User user1 = storage.getById(id1);
-        User user2 = storage.getById(id2);
-        validationUsers(user1, user2);
-        storage.saveFriend(id1, id2);
-        user1.getFriends().add(user2.getId());
-        user2.getFriends().add(user1.getId());
-        log.info("User id: {} add friends user id: {}", id1, id2);
+    public void addFriendToFriendsSet(long user_id, long friendId) {
+        validationUsers(user_id, friendId);
+        storage.saveFriend(user_id, friendId);
+        //        user1.getFriends().add(user2.getId());
+        //        user2.getFriends().add(user1.getId());
+        log.info("User id: {} add friends user id: {}", user_id, friendId);
     }
 
     // удаление пользователя из друзей
-    public void deleteFriendToFriendsSet(Long id1, Long id2) {
-        User user1 = storage.getById(id1);
-        User user2 = storage.getById(id2);
-        validationUsers(user1, user2);
-        storage.deleteFriend(id1,id2);
-        user1.getFriends().remove(user2.getId());
-        user2.getFriends().remove(user1.getId());
-        log.info("User id: {} delete friends user id: {}", id1, id2);
+    public void deleteFriendToFriendsSet(long userId, long friendId) {
+//        User user1 = storage.getById(userId);
+//        User user2 = storage.getById(friendId);
+        validationUsers(userId, friendId);
+        storage.deleteFriend(userId, friendId);
+        //        user1.getFriends().remove(user2.getId());
+        //        user2.getFriends().remove(user1.getId());
+        log.info("User id: {} delete friends user id: {}", userId, friendId);
     }
 
     // вывод общих друзей
-    public List<User> findCommonFriends(Long id1, Long id2) {
-        User user1 = storage.getById(id1);
-        User user2 = storage.getById(id2);
-        Set<Long> commonFriends = new HashSet<>(user1.getFriends());
-        commonFriends.retainAll(user2.getFriends());
+    public List<User> findCommonFriends(Long userId, Long friendId) {
+        User user = storage.getById(userId);
+        User friend = storage.getById(friendId);
+        Set<Long> commonFriends = new HashSet<>(user.getFriends());
+        commonFriends.retainAll(friend.getFriends());
 
         return commonFriends.stream()
                 .map(storage::getById)
@@ -66,8 +64,8 @@ public class UserService {
     }
 
     //проверка, что в переданы id различных пользователей
-    private void validationUsers(User user1, User user2) {
-        if (user1.equals(user2)) {
+    private void validationUsers(long userId, long friendId) {
+        if (userId == friendId) {
             throw new ValidationException("User can't add or delete himself as \"friend\"");
         }
     }

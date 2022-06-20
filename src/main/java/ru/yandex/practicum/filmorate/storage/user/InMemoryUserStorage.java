@@ -62,16 +62,6 @@ public class InMemoryUserStorage implements UserStorage {
         return users.get(emailMaps.get(id));
     }
 
-    @Override
-    public void saveLike(long filmId, long userId) {
-
-    }
-
-    @Override
-    public void deleteLike(long filmId, long userId) {
-
-    }
-
     //удалени пользователя
     @Override
     public void delete(String email) {
