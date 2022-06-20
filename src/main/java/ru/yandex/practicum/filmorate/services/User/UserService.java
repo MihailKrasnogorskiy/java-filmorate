@@ -29,6 +29,7 @@ public class UserService {
         User user1 = storage.getById(id1);
         User user2 = storage.getById(id2);
         validationUsers(user1, user2);
+        storage.saveFriend(id1, id2);
         user1.getFriends().add(user2.getId());
         user2.getFriends().add(user1.getId());
         log.info("User id: {} add friends user id: {}", id1, id2);
@@ -39,6 +40,7 @@ public class UserService {
         User user1 = storage.getById(id1);
         User user2 = storage.getById(id2);
         validationUsers(user1, user2);
+        storage.deleteFriend(id1,id2);
         user1.getFriends().remove(user2.getId());
         user2.getFriends().remove(user1.getId());
         log.info("User id: {} delete friends user id: {}", id1, id2);
@@ -63,7 +65,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    //проверка, что в переданы id азличных пользователей
+    //проверка, что в переданы id различных пользователей
     private void validationUsers(User user1, User user2) {
         if (user1.equals(user2)) {
             throw new ValidationException("User can't add or delete himself as \"friend\"");

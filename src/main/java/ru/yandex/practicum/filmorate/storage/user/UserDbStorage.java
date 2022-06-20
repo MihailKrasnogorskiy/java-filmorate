@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Primary
@@ -18,7 +20,7 @@ public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
     private final LikesDao likesDao;
-
+    @Autowired
     public UserDbStorage(JdbcTemplate jdbcTemplate, LikesDao likesDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.likesDao = likesDao;
@@ -83,6 +85,37 @@ public class UserDbStorage implements UserStorage {
         String sqlQuery = "delete from users where email = ?";
         jdbcTemplate.update(sqlQuery, email);
     }
+    @Override
+    public void saveFriend(long userId, long friendId){
+        String sqlQuery = "merge into friends (user_id, friend, friendship_status) key (user_id, friend)" +
+                "values (?,?,?)";
+        jdbcTemplate.update(sqlQuery, userId, friendId, 1);
+    }
+    @Override
+    public void saveSubscriber(long userId, long subscriberId){
+        String sqlQuery = "merge into friends (user_id, friend, friendship_status) key (user_id, friend)" +
+                "values (?,?,?)";
+        jdbcTemplate.update(sqlQuery, userId, subscriberId, 2);
+    }
+    @Override
+    public void deleteFriend(long userId, long subscriberId) {
+        String sqlQuery = "delete from friends where user_id = ? and friend = ?";
+        jdbcTemplate.update(sqlQuery, userId, subscriberId);
+    }
+    @Override
+    public List<Long> getUserFriends(long id) {
+        String sqlQuery = "select friend from friends where user_id = ? and friendship_status = 1";
+        return jdbcTemplate.queryForList(sqlQuery, Integer.class, id).stream()
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public List<Long> getUserSubscribers(long id) {
+        String sqlQuery = "select friend from friends where user_id = ? and friendship_status = 2";
+        return jdbcTemplate.queryForList(sqlQuery, Integer.class, id).stream()
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+    }
 
     private User makeUser(ResultSet rs) throws SQLException {
         long id = rs.getInt("user_id");
@@ -92,6 +125,8 @@ public class UserDbStorage implements UserStorage {
         LocalDate birthday = rs.getDate("birthday").toLocalDate();
         User user = new User(id, email, login, name, birthday);
         user.getLikedFilms().addAll(likesDao.getUserLikes(id));
+        user.getFriends().addAll(getUserFriends(id));
+        user.getSubscribers().addAll(getUserSubscribers(id));
         return user;
     }
 

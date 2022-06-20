@@ -1,16 +1,20 @@
 package ru.yandex.practicum.filmorate.storage.film.mpa;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.films.mpa.Mpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MpaDao {
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public MpaDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -25,5 +29,12 @@ public class MpaDao {
         Mpa mpa = new Mpa(id);
         mpa.setName(ratingString);
         return mpa;
+    }
+
+    public List<Mpa> getAll() {
+        String sqlQuery = "select rating_id from ratings";
+        return jdbcTemplate.queryForList(sqlQuery, Integer.class).stream()
+                .map(this::get)
+                .collect(Collectors.toList());
     }
 }

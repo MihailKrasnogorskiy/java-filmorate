@@ -83,6 +83,31 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Delete user with email {}", email);
     }
 
+    @Override
+    public void saveFriend(long userId, long friendId) {
+
+    }
+
+    @Override
+    public void saveSubscriber(long userId, long subscriberId) {
+
+    }
+
+    @Override
+    public void deleteFriend(long userId, long subscriberId) {
+
+    }
+
+    @Override
+    public List<Long> getUserFriends(long id) {
+        return null;
+    }
+
+    @Override
+    public List<Long> getUserSubscribers(long id) {
+        return null;
+    }
+
     //очистка хранилища
     public void clear() {
         users.clear();

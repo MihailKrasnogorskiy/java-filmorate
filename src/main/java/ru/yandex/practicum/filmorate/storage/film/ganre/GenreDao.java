@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film.ganre;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.films.Film;
@@ -16,6 +17,7 @@ import java.util.stream.Stream;
 public class GenreDao {
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public GenreDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -39,7 +41,7 @@ public class GenreDao {
     public List<Genre> getFilmGenres(long filmId) {
         String sqlQuery = "select genre_id from film_genres where film_id = ?";
         return jdbcTemplate.queryForList(sqlQuery, Integer.class, filmId).stream()
-                .map(n -> get(n))
+                .map(this::get)
                 .collect(Collectors.toList());
 
 
@@ -48,7 +50,7 @@ public class GenreDao {
     public List<Genre> getAll() {
         String sqlQuery = "select genre_id from genres";
         return jdbcTemplate.queryForList(sqlQuery, Integer.class).stream()
-                .map(n -> get(n))
+                .map(this::get)
                 .collect(Collectors.toList());
     }
 
@@ -62,7 +64,7 @@ public class GenreDao {
     public void updateFilmsGenres(Film film) {
         String sqlQuery = "delete from film_genres where film_id = ?";
         jdbcTemplate.update(sqlQuery, film.getId());
-        if(!film.getGenres().isEmpty()){
+        if (!film.getGenres().isEmpty()) {
             saveFilmGenres(film.getGenres(), film.getId());
         }
     }

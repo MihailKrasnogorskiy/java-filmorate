@@ -23,4 +23,14 @@ public interface UserStorage {
 
     //удаление пользователя по email
     void delete(String email);
+
+    void saveFriend(long userId, long friendId);
+
+    void saveSubscriber(long userId, long subscriberId);
+
+    void deleteFriend(long userId, long subscriberId);
+
+    List<Long> getUserFriends(long id);
+
+    List<Long> getUserSubscribers(long id);
 }
