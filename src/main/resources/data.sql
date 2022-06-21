@@ -16,9 +16,3 @@ MERGE INTO genres
            (4, 'Триллер'),
            (5, 'Документальный'),
            (6, 'Боевик');
-
-MERGE INTO friendship_status
-    (status_id, status)
-    KEY (status_id)
-    VALUES (1, 'Дружба'),
-           (2, 'Подписка');

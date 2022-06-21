@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.services.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.users.Request;
 import ru.yandex.practicum.filmorate.model.users.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -25,23 +26,26 @@ public class UserService {
     }
 
     //добавление пользователя в друзья
-    public void addFriendToFriendsSet(long user_id, long friendId) {
-        validationUsers(user_id, friendId);
-        storage.saveFriend(user_id, friendId);
+    public void addFriendToFriendsSet(long outgoingId, long incomingId) {
+        validationUsers(outgoingId, incomingId);
+        Request request = new Request(outgoingId, incomingId, "unconfirmed");
+        request = storage.saveRequest(request);
+        storage.saveFriend(outgoingId, incomingId, request);
+
         //        user1.getFriends().add(user2.getId());
         //        user2.getFriends().add(user1.getId());
-        log.info("User id: {} add friends user id: {}", user_id, friendId);
+        log.info("User id: {} add friends user id: {}", outgoingId, incomingId);
     }
 
     // удаление пользователя из друзей
-    public void deleteFriendToFriendsSet(long userId, long friendId) {
-//        User user1 = storage.getById(userId);
-//        User user2 = storage.getById(friendId);
-        validationUsers(userId, friendId);
-        storage.deleteFriend(userId, friendId);
+    public void deleteFriendToFriendsSet(long outgoingId, long incomingId) {
+//        User user1 = storage.getById(outgoingId);
+//        User user2 = storage.getById(incomingId);
+        validationUsers(outgoingId, incomingId);
+        storage.deleteFriend(outgoingId, incomingId);
         //        user1.getFriends().remove(user2.getId());
         //        user2.getFriends().remove(user1.getId());
-        log.info("User id: {} delete friends user id: {}", userId, friendId);
+        log.info("User id: {} delete friends user id: {}", outgoingId, incomingId);
     }
 
     // вывод общих друзей
@@ -68,5 +72,7 @@ public class UserService {
         if (userId == friendId) {
             throw new ValidationException("User can't add or delete himself as \"friend\"");
         }
+        storage.userIdValidation(userId);
+        storage.userIdValidation(friendId);
     }
 }

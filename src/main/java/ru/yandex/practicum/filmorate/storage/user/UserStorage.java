@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
+import ru.yandex.practicum.filmorate.model.users.Request;
 import ru.yandex.practicum.filmorate.model.users.User;
 
 import java.util.List;
@@ -21,17 +22,22 @@ public interface UserStorage {
     void delete(String email);
 
     //сохранение друга
-    void saveFriend(long userId, long friendId);
+    void saveFriend(long userId, long friendId, Request request);
 
-    //сохранение подписчика
-    void saveSubscriber(long userId, long subscriberId);
+//    //сохранение подписчика
+//    void saveSubscriber(long userId, long subscriberId);
 
     //удаление друга
     void deleteFriend(long userId, long subscriberId);
 
     //возвращение списка друзей
     List<Long> getUserFriends(long id);
+//
+//    //возвращение списка подписчиков
+//    List<Long> getUserSubscribers(long id);
 
-    //возвращение списка подписчиков
-    List<Long> getUserSubscribers(long id);
+    // сохранение заявки
+    Request saveRequest(Request request);
+
+    void userIdValidation(long id);
 }

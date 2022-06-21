@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.model.users.Request;
 import ru.yandex.practicum.filmorate.model.users.User;
 import ru.yandex.practicum.filmorate.storage.LikesDao;
 
@@ -22,10 +23,13 @@ public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
     private final LikesDao likesDao;
 
+    private final RequestDao requestDao;
+
     @Autowired
-    public UserDbStorage(JdbcTemplate jdbcTemplate, LikesDao likesDao) {
+    public UserDbStorage(JdbcTemplate jdbcTemplate, LikesDao likesDao, RequestDao requestDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.likesDao = likesDao;
+        this.requestDao = requestDao;
     }
 
     @Override
@@ -84,47 +88,60 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void saveFriend(long userId, long friendId) {
-        userIdValidation(userId);
-        userIdValidation(friendId);
-        String sqlQuery = "merge into friends (user_id, friend, friendship_status) key (user_id, friend)" +
+    public void saveFriend(long outgoingId, long incomingId, Request request) {
+        userIdValidation(outgoingId);
+        userIdValidation(incomingId);
+        String sqlQuery = "merge into friends (user_id, friend, request_id) key (user_id, friend)" +
                 "values (?,?,?)";
-        jdbcTemplate.update(sqlQuery, userId, friendId, 1);
+        jdbcTemplate.update(sqlQuery, outgoingId, incomingId, request.getId());
     }
 
-    @Override
-    public void saveSubscriber(long userId, long subscriberId) {
-        userIdValidation(userId);
-        userIdValidation(subscriberId);
-        String sqlQuery = "merge into friends (user_id, friend, friendship_status) key (user_id, friend)" +
-                "values (?,?,?)";
-        jdbcTemplate.update(sqlQuery, userId, subscriberId, 2);
-    }
+//    @Override
+//    public void saveSubscriber(long userId, long subscriberId) {
+//        userIdValidation(userId);
+//        userIdValidation(subscriberId);
+//        String sqlQuery = "merge into friends (user_id, friend, friendship_status) key (user_id, friend)" +
+//                "values (?,?,?)";
+//        jdbcTemplate.update(sqlQuery, userId, subscriberId, 2);
+//    }
 
     @Override
-    public void deleteFriend(long userId, long subscriberId) {
-        userIdValidation(userId);
-        userIdValidation(subscriberId);
+    public void deleteFriend(long outgoingId, long incomingId) {
+        userIdValidation(outgoingId);
+        userIdValidation(incomingId);
+        Request request = requestDao.get(requestDao.getRequestId(outgoingId,incomingId));
+        String oldStatus = request.getStatus();
+        request.setStatus("delete friendship");
+        requestDao.update(request);
+        if(oldStatus.equals("confirm")){
+            String sqlQuery = "delete from friends where user_id = ? and friend = ?";
+            jdbcTemplate.update(sqlQuery, incomingId, outgoingId);
+        }
         String sqlQuery = "delete from friends where user_id = ? and friend = ?";
-        jdbcTemplate.update(sqlQuery, userId, subscriberId);
+        jdbcTemplate.update(sqlQuery, outgoingId, incomingId);
     }
 
     @Override
     public List<Long> getUserFriends(long id) {
         userIdValidation(id);
-        String sqlQuery = "select friend from friends where user_id = ? and friendship_status = 1";
+        String sqlQuery = "select friend from friends where user_id = ?";
         return jdbcTemplate.queryForList(sqlQuery, Integer.class, id).stream()
                 .map(Long::valueOf)
                 .collect(Collectors.toList());
     }
 
+//    @Override
+//    public List<Long> getUserSubscribers(long id) {
+//        userIdValidation(id);
+//        String sqlQuery = "select friend from friends where user_id = ? and friendship_status = 2";
+//        return jdbcTemplate.queryForList(sqlQuery, Integer.class, id).stream()
+//                .map(Long::valueOf)
+//                .collect(Collectors.toList());
+//    }
+
     @Override
-    public List<Long> getUserSubscribers(long id) {
-        userIdValidation(id);
-        String sqlQuery = "select friend from friends where user_id = ? and friendship_status = 2";
-        return jdbcTemplate.queryForList(sqlQuery, Integer.class, id).stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
+    public Request saveRequest(Request request) {
+        return requestDao.create(request);
     }
 
     private User makeUser(ResultSet rs) throws SQLException {
@@ -136,11 +153,11 @@ public class UserDbStorage implements UserStorage {
         User user = new User(id, email, login, name, birthday);
         user.getLikedFilms().addAll(likesDao.getUserLikes(id));
         user.getFriends().addAll(getUserFriends(id));
-        user.getSubscribers().addAll(getUserSubscribers(id));
+//        user.getSubscribers().addAll(getUserSubscribers(id));
         return user;
     }
-
-    private void userIdValidation(long id) {
+@Override
+    public void userIdValidation(long id) {
         List<Integer> userIds;
         String sqlQuery = "select user_id from users";
         userIds = jdbcTemplate.queryForList(sqlQuery, Integer.class);

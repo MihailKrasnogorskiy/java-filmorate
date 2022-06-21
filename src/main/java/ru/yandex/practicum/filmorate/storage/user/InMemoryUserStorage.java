@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
+import ru.yandex.practicum.filmorate.model.users.Request;
 import ru.yandex.practicum.filmorate.model.users.User;
 import ru.yandex.practicum.filmorate.services.IdCreator;
 
@@ -74,12 +75,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void saveFriend(long userId, long friendId) {
-
-    }
-
-    @Override
-    public void saveSubscriber(long userId, long subscriberId) {
+    public void saveFriend(long userId, long friendId, Request request) {
 
     }
 
@@ -94,8 +90,13 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<Long> getUserSubscribers(long id) {
+    public Request saveRequest(Request request) {
         return null;
+    }
+
+    @Override
+    public void userIdValidation(long id) {
+
     }
 
     //очистка хранилища
