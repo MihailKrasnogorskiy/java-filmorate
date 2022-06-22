@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-@Primary
 //класс реализация хранилища пользователей
 public class InMemoryUserStorage implements UserStorage {
     private final IdCreator userIdCreator = new IdCreator();

@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 @Component
-@Primary
 public class InMemoryMpaStorage implements MpaStorage {
 
     private final Mpa[] mpas = new Mpa[]{new Mpa(1, "G"), new Mpa(2, "PG"),

@@ -20,7 +20,6 @@ import java.util.TreeSet;
 
 @Component
 @Slf4j
-@Primary
 //класс реализация хранилища фильмов
 public class InMemoryFilmStorage implements FilmStorage {
     private final HashMap<Long, Film> films = new HashMap<>();
@@ -71,6 +70,13 @@ public class InMemoryFilmStorage implements FilmStorage {
         film.getMpa().setName(mpaStorage.getMpaNameById(film.getMpa().getId()));
         if (film.getGenres() != null) {
             createGenres(film);
+            if(film.getGenres().isEmpty()){
+                film.setGenres(null);
+                films.put(film.getId(),film);
+                System.out.println("genres был пустой " + films.get(film.getId()).getGenres());
+                return new Film(film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
+                        film.getDuration(),film.getMpa(), new ArrayList<>());
+            }
         }
         films.put(film.getId(), film);
         log.info("Update film {}", film);
@@ -93,6 +99,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (!films.containsKey(id)) {
             throw new FoundException("This film is not found");
         }
+       System.out.println("genres " + films.get(id).getGenres());
         return films.get(id);
     }
 
