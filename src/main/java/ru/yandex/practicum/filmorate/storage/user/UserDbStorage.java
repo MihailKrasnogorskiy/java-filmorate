@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@Primary
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
@@ -96,24 +95,15 @@ public class UserDbStorage implements UserStorage {
         jdbcTemplate.update(sqlQuery, outgoingId, incomingId, request.getId());
     }
 
-//    @Override
-//    public void saveSubscriber(long userId, long subscriberId) {
-//        userIdValidation(userId);
-//        userIdValidation(subscriberId);
-//        String sqlQuery = "merge into friends (user_id, friend, friendship_status) key (user_id, friend)" +
-//                "values (?,?,?)";
-//        jdbcTemplate.update(sqlQuery, userId, subscriberId, 2);
-//    }
-
     @Override
     public void deleteFriend(long outgoingId, long incomingId) {
         userIdValidation(outgoingId);
         userIdValidation(incomingId);
-        Request request = requestDao.get(requestDao.getRequestId(outgoingId,incomingId));
+        Request request = requestDao.get(requestDao.getRequestId(outgoingId, incomingId));
         String oldStatus = request.getStatus();
         request.setStatus("delete friendship");
         requestDao.update(request);
-        if(oldStatus.equals("confirm")){
+        if (oldStatus.equals("confirm")) {
             String sqlQuery = "delete from friends where user_id = ? and friend = ?";
             jdbcTemplate.update(sqlQuery, incomingId, outgoingId);
         }
@@ -130,14 +120,13 @@ public class UserDbStorage implements UserStorage {
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public List<Long> getUserSubscribers(long id) {
-//        userIdValidation(id);
-//        String sqlQuery = "select friend from friends where user_id = ? and friendship_status = 2";
-//        return jdbcTemplate.queryForList(sqlQuery, Integer.class, id).stream()
-//                .map(Long::valueOf)
-//                .collect(Collectors.toList());
-//    }
+    @Override
+    public void confirmRequest(long incomingId, long outgoingId) {
+        Request request = requestDao.get(requestDao.getRequestId(incomingId, outgoingId));
+        request.setStatus("confirm");
+        requestDao.update(request);
+        saveFriend(incomingId, outgoingId, request);
+    }
 
     @Override
     public Request saveRequest(Request request) {
@@ -153,10 +142,10 @@ public class UserDbStorage implements UserStorage {
         User user = new User(id, email, login, name, birthday);
         user.getLikedFilms().addAll(likesDao.getUserLikes(id));
         user.getFriends().addAll(getUserFriends(id));
-//        user.getSubscribers().addAll(getUserSubscribers(id));
         return user;
     }
-@Override
+
+    @Override
     public void userIdValidation(long id) {
         List<Integer> userIds;
         String sqlQuery = "select user_id from users";

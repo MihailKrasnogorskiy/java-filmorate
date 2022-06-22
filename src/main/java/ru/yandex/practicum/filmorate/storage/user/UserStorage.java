@@ -24,17 +24,13 @@ public interface UserStorage {
     //сохранение друга
     void saveFriend(long userId, long friendId, Request request);
 
-//    //сохранение подписчика
-//    void saveSubscriber(long userId, long subscriberId);
-
     //удаление друга
     void deleteFriend(long userId, long subscriberId);
 
     //возвращение списка друзей
     List<Long> getUserFriends(long id);
-//
-//    //возвращение списка подписчиков
-//    List<Long> getUserSubscribers(long id);
+
+    void confirmRequest(long incomingId, long outgoingId);
 
     // сохранение заявки
     Request saveRequest(Request request);

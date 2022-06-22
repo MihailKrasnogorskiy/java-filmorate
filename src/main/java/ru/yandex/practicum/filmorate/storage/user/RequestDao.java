@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Component
 public class RequestDao {
     private final JdbcTemplate jdbcTemplate;
@@ -23,7 +24,7 @@ public class RequestDao {
         return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> makeRequest(id, rs), id);
     }
 
-    public int getRequestId(long outgoingId, long incomingId){
+    public int getRequestId(long outgoingId, long incomingId) {
         String sqlQuery = "select request_id from requests where outgoing_id = ? and incoming_id = ? ";
         return jdbcTemplate.queryForObject(sqlQuery, Integer.class, outgoingId, incomingId);
     }
@@ -45,7 +46,7 @@ public class RequestDao {
                 .collect(Collectors.toList());
     }
 
-    public Request create(Request request){
+    public Request create(Request request) {
         String sqlQuery = "insert into requests (outgoing_id, incoming_id, status) " +
                 "values (?, ?, ?)";
         jdbcTemplate.update(sqlQuery,
@@ -59,7 +60,7 @@ public class RequestDao {
         return get(requestId);
     }
 
-    public Request update(Request request){
+    public Request update(Request request) {
         String sqlQuery = "update requests set outgoing_id = ?, incoming_id = ?, status = ?" +
                 "where request_id = ?";
         jdbcTemplate.update(sqlQuery,

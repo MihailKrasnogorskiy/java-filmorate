@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.model.users.Request;
@@ -11,14 +12,19 @@ import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@Primary
 //класс реализация хранилища пользователей
 public class InMemoryUserStorage implements UserStorage {
     private final IdCreator userIdCreator = new IdCreator();
     private final HashMap<String, User> users = new HashMap<>();
     private final HashMap<Long, String> emailMaps = new HashMap<>();
+    private final HashMap<Long, Request> requestMap = new HashMap<>();
+
+    private int requestCounter;
 
     //создание пользователя
     @Override
@@ -75,33 +81,67 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void saveFriend(long userId, long friendId, Request request) {
-
+    public void saveFriend(long outgoing, long incoming, Request request) {
+        getById(outgoing).getFriends().add(incoming);
     }
 
     @Override
-    public void deleteFriend(long userId, long subscriberId) {
-
+    public void deleteFriend(long outgoingId, long incomingId) {
+        Request request = getRequest(incomingId,outgoingId);
+        String oldRequestStatus = request.getStatus();
+        request.setStatus("delete");
+        requestMap.put(request.getId(), request);
+        if (oldRequestStatus.equals("confirm")) {
+            getById(incomingId).getFriends().remove(outgoingId);
+        }
+        getById(outgoingId).getFriends().remove(incomingId);
     }
 
     @Override
     public List<Long> getUserFriends(long id) {
-        return null;
+        return new ArrayList<>(getById(id).getFriends());
+    }
+
+    @Override
+    public void confirmRequest(long incomingId, long outgoingId) {
+        Request request = getRequest(incomingId,outgoingId);
+        request.setStatus("confirm");
+        requestMap.put(request.getId(), request);
+        saveFriend(incomingId, outgoingId, request);
     }
 
     @Override
     public Request saveRequest(Request request) {
-        return null;
+        requestCounter++;
+        request.setId(requestCounter);
+        requestMap.put(request.getId(), request);
+        return request;
     }
 
     @Override
     public void userIdValidation(long id) {
+        if(!emailMaps.containsKey(id)){
+            throw new FoundException("This user unregistered");
+        }
+    }
 
+    private Request getRequest(long incomingId, long outgoingId){
+        return requestMap.values().stream()
+                .map(Request::getIncomingId)
+                .filter(s -> s == incomingId)
+                .map(requestMap::get)
+                .map(Request::getOutgoingId)
+                .filter(s -> s == outgoingId)
+                .map(requestMap::get)
+                .findFirst()
+                .get();
     }
 
     //очистка хранилища
     public void clear() {
         users.clear();
         userIdCreator.clear();
+        requestCounter = 0;
+        requestMap.clear();
     }
 }

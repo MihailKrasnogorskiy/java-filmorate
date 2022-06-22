@@ -31,9 +31,6 @@ public class UserService {
         Request request = new Request(outgoingId, incomingId, "unconfirmed");
         request = storage.saveRequest(request);
         storage.saveFriend(outgoingId, incomingId, request);
-
-        //        user1.getFriends().add(user2.getId());
-        //        user2.getFriends().add(user1.getId());
         log.info("User id: {} add friends user id: {}", outgoingId, incomingId);
     }
 
@@ -74,5 +71,11 @@ public class UserService {
         }
         storage.userIdValidation(userId);
         storage.userIdValidation(friendId);
+    }
+
+    public void confirmRequest(long incomingId, long outgoingId) {
+        storage.userIdValidation(incomingId);
+        storage.userIdValidation(outgoingId);
+        storage.confirmRequest(incomingId, outgoingId);
     }
 }

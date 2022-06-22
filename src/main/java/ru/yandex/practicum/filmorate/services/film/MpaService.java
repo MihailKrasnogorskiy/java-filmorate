@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.model.films.mpa.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.mpa.MpaDao;
+import ru.yandex.practicum.filmorate.storage.film.mpa.MpaStorage;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Component
 public class MpaService {
 
-    private final MpaDao storage;
+    private final MpaStorage storage;
 
     @Autowired
     public MpaService(MpaDao storage) {

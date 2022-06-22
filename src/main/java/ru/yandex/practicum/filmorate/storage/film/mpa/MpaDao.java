@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class MpaDao {
+public class MpaDao implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public MpaDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
+@Override
     public Mpa get(int id) {
         String sqlQuery = "select * from ratings where rating_id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> makeMpa(id, rs), id);
@@ -30,11 +30,18 @@ public class MpaDao {
         mpa.setName(ratingString);
         return mpa;
     }
-
+@Override
     public List<Mpa> getAll() {
         String sqlQuery = "select rating_id from ratings";
         return jdbcTemplate.queryForList(sqlQuery, Integer.class).stream()
                 .map(this::get)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String getMpaNameById(int id) {
+        String sqlQuery = "select rating from ratings where rating_id = ?";
+        return jdbcTemplate.queryForObject(sqlQuery, String.class, id);
+    }
+
 }

@@ -74,4 +74,10 @@ public class UserController {
     public User findUserById(@PathVariable Long id) {
         return storage.getById(id);
     }
+
+    //подтверждение заявки в друзья
+    @PutMapping("/{id}/friends/confirm/{friendId}")
+    public void confirmFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        service.confirmRequest(id, friendId);
+    }
 }
