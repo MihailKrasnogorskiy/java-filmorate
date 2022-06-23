@@ -19,23 +19,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 class GenreControllerTest {
-    private final ObjectMapper mapper;
-
-    private final MpaStorage storage;
-
     private final GenreController controller;
     private final MockMvc mockMvc;
 
-    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public GenreControllerTest(ObjectMapper mapper, MpaStorage storage, GenreController controller, MockMvc mockMvc,
-                               JdbcTemplate jdbcTemplate) {
-        this.mapper = mapper;
-        this.storage = storage;
+    public GenreControllerTest(ObjectMapper mapper, MpaStorage storage, GenreController controller, MockMvc mockMvc) {
         this.controller = controller;
         this.mockMvc = mockMvc;
-        this.jdbcTemplate = jdbcTemplate;
     }
 
 
