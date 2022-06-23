@@ -30,8 +30,6 @@ public class User {
 
     private Set<Request> requests = new HashSet<>();
 
-    private Set<Long> subscribers = new HashSet<>();
-
     private Set<Long> likedFilms = new HashSet<>();
 
     public User(long id, String email, String login, String name, LocalDate birthday) {

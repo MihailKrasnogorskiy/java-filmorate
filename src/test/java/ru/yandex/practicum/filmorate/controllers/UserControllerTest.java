@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.model.users.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
@@ -20,7 +19,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -243,7 +241,7 @@ class UserControllerTest {
         assertEquals(validUser.getBirthday(), controller.findAll().get(0).getBirthday());
     }
 
-    private void cleareStorage(){
+    private void cleareStorage() {
         String sqlQuery = "SET REFERENTIAL_INTEGRITY FALSE";
         jdbcTemplate.update(sqlQuery);
         sqlQuery = "TRUNCATE TABLE films ";

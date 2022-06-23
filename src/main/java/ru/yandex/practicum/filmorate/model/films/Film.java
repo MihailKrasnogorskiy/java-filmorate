@@ -35,22 +35,6 @@ public class Film {
 
     private Set<Long> likes = new HashSet<>();
 
-    //    public Film(String name, String description, LocalDate releaseDate, Integer duration) {
-    //        validation(releaseDate);
-    //        this.name = name;
-    //        this.description = description;
-    //        this.releaseDate = releaseDate;
-    //        this.duration = duration;
-    //    }
-
-    //    public Film(String name, String description, LocalDate releaseDate, int duration, Mpa mpa) {
-    //        this.name = name;
-    //        this.description = description;
-    //        this.releaseDate = releaseDate;
-    //        this.duration = duration;
-    //        this.mpa = mpa;
-    //    }
-
     public Film(long id, String name, String description, LocalDate releaseDate, int duration, Mpa mpa
             , List<Genre> genres) {
         validation(releaseDate);

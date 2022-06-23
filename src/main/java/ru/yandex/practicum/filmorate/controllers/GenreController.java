@@ -29,7 +29,7 @@ public class GenreController {
 
     //возвращаем жанр по id
     @GetMapping("/{id}")
-    public Genre findFilmById(@PathVariable int id) {
+    public Genre findGenreById(@PathVariable int id) {
         return service.getById(id);
     }
 }

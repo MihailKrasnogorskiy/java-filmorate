@@ -73,6 +73,7 @@ public class UserService {
         storage.userIdValidation(friendId);
     }
 
+    //подтверждение заявки в друзья
     public void confirmRequest(long incomingId, long outgoingId) {
         storage.userIdValidation(incomingId);
         storage.userIdValidation(outgoingId);

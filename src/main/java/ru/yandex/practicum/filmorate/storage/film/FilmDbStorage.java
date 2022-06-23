@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+// класс для работы с фильмами через БД
 @Component
 @Primary
 public class FilmDbStorage implements FilmStorage {
@@ -34,6 +35,7 @@ public class FilmDbStorage implements FilmStorage {
         this.likesDao = likesDao;
     }
 
+    // создание фильма
     @Override
     public Film create(Film film) {
         if (film.getMpa() == null) {
@@ -55,6 +57,7 @@ public class FilmDbStorage implements FilmStorage {
         return getById(filmId);
     }
 
+    // обновление фильма
     @Override
     public Film update(Film film) {
         filmIdValidation(film.getId());
@@ -81,6 +84,7 @@ public class FilmDbStorage implements FilmStorage {
         return getById(film.getId());
     }
 
+    // удаление
     @Override
     public void delete(Film film) {
         filmIdValidation(film.getId());
@@ -95,6 +99,7 @@ public class FilmDbStorage implements FilmStorage {
 
     }
 
+    // возвращение фильма по id
     @Override
     public Film getById(Long id) {
         filmIdValidation(id);
@@ -102,6 +107,7 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> makeFilm(rs), id);
     }
 
+    // сохранение лайка
     @Override
     public void saveLike(long filmId, long userId) {
         filmIdValidation(filmId);
@@ -109,6 +115,7 @@ public class FilmDbStorage implements FilmStorage {
         likesDao.saveLike(filmId, userId);
     }
 
+    // удаление лайка
     @Override
     public void deleteLike(long filmId, long userId) {
         filmIdValidation(filmId);
@@ -116,6 +123,7 @@ public class FilmDbStorage implements FilmStorage {
         likesDao.deleteLike(filmId, userId);
     }
 
+    // создание объекта фильма
     private Film makeFilm(ResultSet rs) throws SQLException {
         int id = rs.getInt("film_id");
         String name = rs.getString("name");
@@ -136,6 +144,7 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
+    // валидация фильма по id
     private void filmIdValidation(long id) {
         List<Integer> filmIds;
         String sqlQuery = "select film_id from films";
@@ -145,6 +154,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+    // валидация пользователя
     private void userIdValidation(long id) {
         List<Integer> userIds;
         String sqlQuery = "select user_id from users";

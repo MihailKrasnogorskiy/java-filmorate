@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// класс для работы с пользователями через БД
 @Component
 @Primary
 public class UserDbStorage implements UserStorage {
@@ -32,6 +33,7 @@ public class UserDbStorage implements UserStorage {
         this.requestDao = requestDao;
     }
 
+    // создание пользователя
     @Override
     public User create(User user) {
         if (emailValidation(user.getEmail())) {
@@ -51,12 +53,14 @@ public class UserDbStorage implements UserStorage {
         return getById(userId);
     }
 
+    // возвращение списка всех пользователей
     @Override
     public List<User> findAll() {
         String sqlQuery = "select * from users";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> makeUser(rs));
     }
 
+    // обновление
     @Override
     public User update(User user) {
         userIdValidation(user.getId());
@@ -71,6 +75,7 @@ public class UserDbStorage implements UserStorage {
         return getById(user.getId());
     }
 
+    // возвращение пользователя по id
     @Override
     public User getById(Long id) {
         userIdValidation(id);
@@ -78,6 +83,7 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> makeUser(rs), id);
     }
 
+    // удаление
     @Override
     public void delete(String email) {
         if (!emailValidation(email)) {
@@ -87,6 +93,7 @@ public class UserDbStorage implements UserStorage {
         jdbcTemplate.update(sqlQuery, email);
     }
 
+    // сохранение в друзья
     @Override
     public void saveFriend(long outgoingId, long incomingId, Request request) {
         userIdValidation(outgoingId);
@@ -96,11 +103,12 @@ public class UserDbStorage implements UserStorage {
         jdbcTemplate.update(sqlQuery, outgoingId, incomingId, request.getId());
     }
 
+    // удаление из друзей
     @Override
     public void deleteFriend(long outgoingId, long incomingId) {
         userIdValidation(outgoingId);
         userIdValidation(incomingId);
-        Request request = requestDao.get(requestDao.getRequestId(outgoingId, incomingId));
+        Request request = requestDao.get(requestDao.getRequestId(incomingId, outgoingId));
         String oldStatus = request.getStatus();
         request.setStatus("delete friendship");
         requestDao.update(request);
@@ -112,6 +120,7 @@ public class UserDbStorage implements UserStorage {
         jdbcTemplate.update(sqlQuery, outgoingId, incomingId);
     }
 
+    // возвращение списка друзей
     @Override
     public List<Long> getUserFriends(long id) {
         userIdValidation(id);
@@ -121,6 +130,7 @@ public class UserDbStorage implements UserStorage {
                 .collect(Collectors.toList());
     }
 
+    // подтверждение заявки в друзья
     @Override
     public void confirmRequest(long incomingId, long outgoingId) {
         Request request = requestDao.get(requestDao.getRequestId(incomingId, outgoingId));
@@ -129,11 +139,13 @@ public class UserDbStorage implements UserStorage {
         saveFriend(incomingId, outgoingId, request);
     }
 
+    // сохранение заявки в друзья
     @Override
     public Request saveRequest(Request request) {
         return requestDao.create(request);
     }
 
+    // создание объекта пользователя
     private User makeUser(ResultSet rs) throws SQLException {
         long id = rs.getInt("user_id");
         String email = rs.getString("email");
@@ -146,6 +158,7 @@ public class UserDbStorage implements UserStorage {
         return user;
     }
 
+    // валидация пользователя
     @Override
     public void userIdValidation(long id) {
         List<Integer> userIds;
@@ -156,6 +169,7 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
+    // валидация почты
     private boolean emailValidation(String email) {
         List<String> emails;
         String sqlQuery = "select email from users";

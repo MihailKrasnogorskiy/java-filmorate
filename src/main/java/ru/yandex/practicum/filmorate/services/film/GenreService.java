@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.film.ganre.GenreDao;
 
 import java.util.List;
 
+//сервис жанров
 @Component
 public class GenreService {
 
@@ -19,10 +20,12 @@ public class GenreService {
         this.storage = genreDao;
     }
 
+    //возвращаем все жанры
     public List<Genre> getAll() {
         return storage.getAll();
     }
 
+    //возвращаем жанр по id
     public Genre getById(int id) {
         if (id < 1 || id > Genres.values().length) {
             throw new FoundException("Unknown genre");

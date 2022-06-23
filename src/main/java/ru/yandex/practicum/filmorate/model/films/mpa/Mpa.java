@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model.films.mpa;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Data;
 import lombok.Getter;
 
 @Getter

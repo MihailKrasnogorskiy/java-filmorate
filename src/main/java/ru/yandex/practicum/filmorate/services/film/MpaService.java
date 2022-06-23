@@ -20,10 +20,12 @@ public class MpaService {
         this.storage = storage;
     }
 
+    // возвращаем все рейтинги
     public List<Mpa> getAll() {
         return storage.getAll();
     }
 
+    // возвращаем рейтинг по id
     public Mpa getById(int id) {
         if (id < 1 || id > 5) {
             throw new FoundException("Unknown mpa");

@@ -13,8 +13,6 @@ import ru.yandex.practicum.filmorate.model.films.Film;
 import ru.yandex.practicum.filmorate.model.films.mpa.Mpa;
 import ru.yandex.practicum.filmorate.model.users.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
@@ -35,7 +33,7 @@ class FilmControllerTest {
             "Film with Tom Cycyruz",
             LocalDate.of(2000, 2, 22),
             200,
-            new Mpa(1,  "G"),
+            new Mpa(1, "G"),
             null);
 
     private final Film film1 = new Film(0,
@@ -247,7 +245,7 @@ class FilmControllerTest {
         this.mockMvc.perform(post("/films").content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         assertEquals(1, controller.findAll().size());
-       // assertEquals(validFilm.getId(), controller.findAll().get(0).getId());
+        // assertEquals(validFilm.getId(), controller.findAll().get(0).getId());
         assertEquals(validFilm.getName(), controller.findAll().get(0).getName());
         assertEquals(validFilm.getDescription(), controller.findAll().get(0).getDescription());
         assertEquals(validFilm.getReleaseDate(), controller.findAll().get(0).getReleaseDate());
@@ -267,7 +265,7 @@ class FilmControllerTest {
         this.mockMvc.perform(put("/films").content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         assertEquals(1, controller.findAll().size());
-       // assertEquals(validFilm.getId(), controller.findAll().get(0).getId());
+        // assertEquals(validFilm.getId(), controller.findAll().get(0).getId());
         assertEquals(validFilm.getName(), controller.findAll().get(0).getName());
         assertEquals(validFilm.getDescription(), controller.findAll().get(0).getDescription());
         assertEquals(validFilm.getReleaseDate(), controller.findAll().get(0).getReleaseDate());

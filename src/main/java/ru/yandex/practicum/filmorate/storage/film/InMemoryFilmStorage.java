@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.exceptions.IllegalHttpMethodException;
@@ -70,12 +69,12 @@ public class InMemoryFilmStorage implements FilmStorage {
         film.getMpa().setName(mpaStorage.getMpaNameById(film.getMpa().getId()));
         if (film.getGenres() != null) {
             createGenres(film);
-            if(film.getGenres().isEmpty()){
+            if (film.getGenres().isEmpty()) {
                 film.setGenres(null);
-                films.put(film.getId(),film);
+                films.put(film.getId(), film);
                 System.out.println("genres был пустой " + films.get(film.getId()).getGenres());
                 return new Film(film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
-                        film.getDuration(),film.getMpa(), new ArrayList<>());
+                        film.getDuration(), film.getMpa(), new ArrayList<>());
             }
         }
         films.put(film.getId(), film);
@@ -99,16 +98,18 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (!films.containsKey(id)) {
             throw new FoundException("This film is not found");
         }
-       System.out.println("genres " + films.get(id).getGenres());
+        System.out.println("genres " + films.get(id).getGenres());
         return films.get(id);
     }
 
+    // сохранение лайка
     @Override
     public void saveLike(long filmId, long userId) {
         userStorage.getById(userId).getLikedFilms().add(filmId);
         getById(filmId).getLikes().add(userId);
     }
 
+    // удаление лайка
     @Override
     public void deleteLike(long filmId, long userId) {
         userStorage.getById(userId).getLikedFilms().remove(filmId);
@@ -121,6 +122,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         filmIdCreator.clear();
     }
 
+    // создание жанра
     private void createGenres(Film film) {
         TreeSet<Integer> genreIds = new TreeSet<>();
         film.getGenres().stream()

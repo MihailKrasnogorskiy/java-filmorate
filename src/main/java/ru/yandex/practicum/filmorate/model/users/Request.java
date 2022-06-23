@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.model.users;
 
 import lombok.Data;
-
+//класс заявки в друзья
 @Data
 public class Request {
     private long id;

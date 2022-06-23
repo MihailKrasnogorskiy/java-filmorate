@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.model.users.Request;
@@ -12,7 +11,6 @@ import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -79,14 +77,16 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Delete user with email {}", email);
     }
 
+    // сохранение друга
     @Override
     public void saveFriend(long outgoing, long incoming, Request request) {
         getById(outgoing).getFriends().add(incoming);
     }
 
+    // удаление друга
     @Override
     public void deleteFriend(long outgoingId, long incomingId) {
-        Request request = getRequest(incomingId,outgoingId);
+        Request request = getRequest(incomingId, outgoingId);
         String oldRequestStatus = request.getStatus();
         request.setStatus("delete");
         requestMap.put(request.getId(), request);
@@ -96,19 +96,22 @@ public class InMemoryUserStorage implements UserStorage {
         getById(outgoingId).getFriends().remove(incomingId);
     }
 
+    // возвращение списка друзей
     @Override
     public List<Long> getUserFriends(long id) {
         return new ArrayList<>(getById(id).getFriends());
     }
 
+    // подтверждение заявки
     @Override
     public void confirmRequest(long incomingId, long outgoingId) {
-        Request request = getRequest(incomingId,outgoingId);
+        Request request = getRequest(incomingId, outgoingId);
         request.setStatus("confirm");
         requestMap.put(request.getId(), request);
         saveFriend(incomingId, outgoingId, request);
     }
 
+    // сохранение заявки
     @Override
     public Request saveRequest(Request request) {
         requestCounter++;
@@ -117,14 +120,16 @@ public class InMemoryUserStorage implements UserStorage {
         return request;
     }
 
+    // валидация пользователя
     @Override
     public void userIdValidation(long id) {
-        if(!emailMaps.containsKey(id)){
+        if (!emailMaps.containsKey(id)) {
             throw new FoundException("This user unregistered");
         }
     }
 
-    private Request getRequest(long incomingId, long outgoingId){
+    // возвращение заявки по id пользователей
+    private Request getRequest(long incomingId, long outgoingId) {
         return requestMap.values().stream()
                 .map(Request::getIncomingId)
                 .filter(s -> s == incomingId)
