@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.model.films.Film;
 import ru.yandex.practicum.filmorate.model.films.genre.Genre;
 import ru.yandex.practicum.filmorate.model.films.mpa.Mpa;
 import ru.yandex.practicum.filmorate.storage.LikesDao;
-import ru.yandex.practicum.filmorate.storage.film.ganre.GenreDao;
+import ru.yandex.practicum.filmorate.storage.film.genre.GenreDao;
 import ru.yandex.practicum.filmorate.storage.film.mpa.MpaDao;
 
 import java.sql.ResultSet;

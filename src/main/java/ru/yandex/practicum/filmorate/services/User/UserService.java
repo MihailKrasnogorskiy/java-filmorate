@@ -36,12 +36,8 @@ public class UserService {
 
     // удаление пользователя из друзей
     public void deleteFriendToFriendsSet(long outgoingId, long incomingId) {
-//        User user1 = storage.getById(outgoingId);
-//        User user2 = storage.getById(incomingId);
         validationUsers(outgoingId, incomingId);
         storage.deleteFriend(outgoingId, incomingId);
-        //        user1.getFriends().remove(user2.getId());
-        //        user2.getFriends().remove(user1.getId());
         log.info("User id: {} delete friends user id: {}", outgoingId, incomingId);
     }
 

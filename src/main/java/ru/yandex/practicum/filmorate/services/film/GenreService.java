@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.FoundException;
 import ru.yandex.practicum.filmorate.model.films.genre.Genre;
 import ru.yandex.practicum.filmorate.model.films.genre.Genres;
-import ru.yandex.practicum.filmorate.storage.film.ganre.GenreDao;
+import ru.yandex.practicum.filmorate.storage.film.genre.GenreDao;
 
 import java.util.List;
 
