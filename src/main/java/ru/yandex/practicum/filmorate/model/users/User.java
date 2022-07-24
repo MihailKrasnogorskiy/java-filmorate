@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model.users;
 
 
 import lombok.Data;
@@ -28,9 +28,12 @@ public class User {
 
     private Set<Long> friends = new HashSet<>();
 
+    private Set<Request> requests = new HashSet<>();
+
     private Set<Long> likedFilms = new HashSet<>();
 
-    public User(String email, String login, String name, LocalDate birthday) {
+    public User(long id, String email, String login, String name, LocalDate birthday) {
+        this.id = id;
         this.email = email;
         this.login = login;
         if (name.isBlank()) {

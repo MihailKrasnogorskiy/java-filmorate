@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.servises.User.UserService;
+import ru.yandex.practicum.filmorate.model.users.User;
+import ru.yandex.practicum.filmorate.services.User.UserService;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
@@ -73,5 +73,11 @@ public class UserController {
     @GetMapping("/{id}")
     public User findUserById(@PathVariable Long id) {
         return storage.getById(id);
+    }
+
+    //подтверждение заявки в друзья
+    @PutMapping("/{id}/friends/confirm/{friendId}")
+    public void confirmFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        service.confirmRequest(id, friendId);
     }
 }

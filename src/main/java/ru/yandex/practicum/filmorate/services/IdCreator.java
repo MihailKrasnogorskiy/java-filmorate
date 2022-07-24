@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.servises;
+package ru.yandex.practicum.filmorate.services;
 
 
 //класс для генерации ID
